@@ -16,7 +16,7 @@ namespace GTAVInjector.Core
     public static class VersionChecker
     {
         private const string VERSION_JSON_URL = "https://raw.githubusercontent.com/zzepine/tessio-version/main/version.json";
-        private const string CURRENT_VERSION = "2.0.1";
+        private const string CURRENT_VERSION = "2.0.0";
         private const string TESSIO_DISCORD_URL = "https://discord.gg/tessioScript";
 
         private static string? _latestVersion;
