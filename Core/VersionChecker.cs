@@ -3,19 +3,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Text.Json;
 
 namespace GTAVInjector.Core
 {
-    public class VersionInfo
-    {
-        public string Version { get; set; } = string.Empty;
-        public string DiscordUrl { get; set; } = string.Empty;
-    }
-
     public static class VersionChecker
     {
-        private const string VERSION_JSON_URL = "https://raw.githubusercontent.com/zzepine/tessio-version/main/version.json";
+        private const string VERSION_JSON_URL = "https://raw.githubusercontent.com/gavi2004/zzepine-tessio-version-/main/version.txt";
         private const string TESSIO_DISCORD_URL = "https://discord.gg/tessioScript";
         
         private static string? _currentVersion;
@@ -45,11 +38,10 @@ namespace GTAVInjector.Core
             try
             {
                 var response = await _httpClient.GetStringAsync(VERSION_JSON_URL);
-                var versionInfo = JsonSerializer.Deserialize<VersionInfo>(response);
+                _latestVersion = response.Trim();
 
-                if (versionInfo != null && !string.IsNullOrEmpty(versionInfo.Version))
+                if (!string.IsNullOrEmpty(_latestVersion))
                 {
-                    _latestVersion = versionInfo.Version;
                     
                     // Comparar versiones
                     var current = new Version(GetCurrentVersionFromFile());
