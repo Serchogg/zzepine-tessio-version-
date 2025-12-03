@@ -28,8 +28,8 @@ namespace GTAVInjector.Core
             {
                 try
                 {
-                    // Obtener la versión del assembly actual
-                    _currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "2.0.0";
+                    // Obtener la versión del assembly principal (ejecutable)
+                    _currentVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "2.0.0";
                     
                     // Si la versión tiene 4 partes (ej: 2.0.3.0), usar solo las primeras 3
                     var versionParts = _currentVersion.Split('.');
