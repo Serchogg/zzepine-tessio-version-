@@ -36,7 +36,7 @@
                                                     <ControlTemplate TargetType="Thumb">
                                                         <Border Background="{TemplateBinding Background}" 
                                                               CornerRadius="1" Margin="1,0"
-                                                              Width="1">
+                                                              Width="3">
                                                             <Border.Style>
                                                                 <Style TargetType="Border">
                                                                     <Style.Triggers>

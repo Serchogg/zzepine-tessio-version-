@@ -14,18 +14,67 @@
         ResizeMode="NoResize">
     
     <Window.Resources>
-        <!-- Animación de parallax mejorada -->
-        <Storyboard x:Key="ParallaxAnimation" RepeatBehavior="Forever">
+        <!-- Animaciones dinámicas del fondo GTA V -->
+        <Storyboard x:Key="BackgroundAnimation" RepeatBehavior="Forever">
+            <!-- Movimiento suave de la imagen principal -->
+            <DoubleAnimation Storyboard.TargetName="BackgroundTranslate"
+                           Storyboard.TargetProperty="X"
+                           From="-50" To="50" Duration="0:0:45" AutoReverse="True">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="BackgroundTranslate"
+                           Storyboard.TargetProperty="Y"
+                           From="-25" To="25" Duration="0:0:35" AutoReverse="True">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            
+            <!-- Zoom sutil -->
+            <DoubleAnimation Storyboard.TargetName="BackgroundScale"
+                           Storyboard.TargetProperty="ScaleX"
+                           From="1.0" To="1.1" Duration="0:1:30" AutoReverse="True">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="BackgroundScale"
+                           Storyboard.TargetProperty="ScaleY"
+                           From="1.0" To="1.1" Duration="0:1:30" AutoReverse="True">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            
+            <!-- Animación de partículas layer 1 -->
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer1"
                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
-                           From="0" To="-200" Duration="0:0:25" AutoReverse="True">
+                           From="0" To="-150" Duration="0:0:40" AutoReverse="True">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ParallaxLayer1"
+                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                           From="0" To="-75" Duration="0:0:50" AutoReverse="True">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            
+            <!-- Animación de partículas layer 2 -->
+            <DoubleAnimation Storyboard.TargetName="ParallaxLayer2"
+                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                           From="0" To="-200" Duration="0:0:30" AutoReverse="True">
                 <DoubleAnimation.EasingFunction>
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer2"
-                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
-                           From="0" To="-300" Duration="0:0:35" AutoReverse="True">
+                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                           From="0" To="50" Duration="0:1:00" AutoReverse="True">
                 <DoubleAnimation.EasingFunction>
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
@@ -35,70 +84,77 @@
     
     <Window.Triggers>
         <EventTrigger RoutedEvent="Loaded">
-            <BeginStoryboard Storyboard="{StaticResource ParallaxAnimation}"/>
+            <BeginStoryboard Storyboard="{StaticResource BackgroundAnimation}"/>
         </EventTrigger>
     </Window.Triggers>
 
     <Border BorderBrush="#FF9EFF" BorderThickness="2" CornerRadius="15" Padding="0">
         <Grid MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-            <!-- Fondo animado con parallax -->
-            <Canvas ClipToBounds="True">
-                <Canvas.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#13001F" Offset="0"/>
-                        <GradientStop Color="#1D022D" Offset="0.6"/>
-                        <GradientStop Color="#13001F" Offset="1"/>
-                    </LinearGradientBrush>
-                </Canvas.Background>
+            <!-- Fondo dinámico con imagen GTA V y parallax -->
+            <Canvas ClipToBounds="True" x:Name="DynamicBackgroundCanvas" MouseMove="Canvas_MouseMove">
+                <!-- Imagen de fondo base -->
+                <Image x:Name="BackgroundImage" 
+                       Source="Resources/wallpaper_gta_v.png"
+                       Canvas.Left="0" Canvas.Top="0"
+                       Width="1200" Height="800"
+                       Stretch="UniformToFill"
+                       Opacity="0.85">
+                    <Image.RenderTransform>
+                        <TransformGroup x:Name="BackgroundTransform">
+                            <TranslateTransform x:Name="BackgroundTranslate"/>
+                            <ScaleTransform x:Name="BackgroundScale" ScaleX="1.0" ScaleY="1.0"/>
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>
                 
-                <!-- Capa de parallax 1 -->
-                <Canvas x:Name="ParallaxLayer1" Width="1400" Height="700" Opacity="0.8">
+                <!-- Capa de overlay para oscurecer ligeramente -->
+                <Rectangle Canvas.Left="0" Canvas.Top="0" Width="1200" Height="800" 
+                          Fill="Black" Opacity="0.4"/>
+                
+                <!-- Capa de parallax 1 - Elementos dinámicos -->
+                <Canvas x:Name="ParallaxLayer1" Width="1400" Height="700" Opacity="0.6">
                     <Canvas.RenderTransform>
                         <TranslateTransform X="0" Y="0"/>
                     </Canvas.RenderTransform>
-                    <Ellipse Width="300" Height="300" Canvas.Left="50" Canvas.Top="50" Fill="#7B3FD1" Opacity="0.7">
-                        <Ellipse.Effect>
-                            <BlurEffect Radius="5"/>
-                        </Ellipse.Effect>
-                    </Ellipse>
-                    <Ellipse Width="200" Height="200" Canvas.Left="600" Canvas.Top="300" Fill="#A946FF" Opacity="0.8">
-                        <Ellipse.Effect>
-                            <BlurEffect Radius="3"/>
-                        </Ellipse.Effect>
-                    </Ellipse>
-                    <Ellipse Width="150" Height="150" Canvas.Left="350" Canvas.Top="150" Fill="#BB4CFF" Opacity="0.6">
+                    <!-- Efectos de partículas sutiles -->
+                    <Ellipse Width="8" Height="8" Canvas.Left="100" Canvas.Top="150" Fill="#A946FF" Opacity="0.8">
                         <Ellipse.Effect>
                             <BlurEffect Radius="2"/>
                         </Ellipse.Effect>
                     </Ellipse>
-                    <Ellipse Width="100" Height="100" Canvas.Left="800" Canvas.Top="80" Fill="#D872FF" Opacity="0.9">
+                    <Ellipse Width="6" Height="6" Canvas.Left="300" Canvas.Top="250" Fill="#BB4CFF" Opacity="0.7">
                         <Ellipse.Effect>
                             <BlurEffect Radius="1"/>
                         </Ellipse.Effect>
                     </Ellipse>
-                </Canvas>
-                
-                <!-- Capa de parallax 2 -->
-                <Canvas x:Name="ParallaxLayer2" Width="1400" Height="700" Opacity="0.7">
-                    <Canvas.RenderTransform>
-                        <TranslateTransform X="0" Y="0"/>
-                    </Canvas.RenderTransform>
-                    <Ellipse Width="250" Height="250" Canvas.Left="450" Canvas.Top="40" Fill="#FF72E2" Opacity="0.6">
-                        <Ellipse.Effect>
-                            <BlurEffect Radius="4"/>
-                        </Ellipse.Effect>
-                    </Ellipse>
-                    <Ellipse Width="180" Height="180" Canvas.Left="150" Canvas.Top="350" Fill="#A946FF" Opacity="0.7">
+                    <Ellipse Width="10" Height="10" Canvas.Left="500" Canvas.Top="100" Fill="#D872FF" Opacity="0.9">
                         <Ellipse.Effect>
                             <BlurEffect Radius="3"/>
                         </Ellipse.Effect>
                     </Ellipse>
-                    <Ellipse Width="120" Height="120" Canvas.Left="750" Canvas.Top="200" Fill="#7B3FD1" Opacity="0.8">
+                    <Ellipse Width="7" Height="7" Canvas.Left="750" Canvas.Top="300" Fill="#FF9EFF" Opacity="0.6">
                         <Ellipse.Effect>
                             <BlurEffect Radius="2"/>
                         </Ellipse.Effect>
                     </Ellipse>
-                    <Ellipse Width="80" Height="80" Canvas.Left="900" Canvas.Top="320" Fill="#D872FF" Opacity="0.9">
+                </Canvas>
+                
+                <!-- Capa de parallax 2 - Más partículas -->
+                <Canvas x:Name="ParallaxLayer2" Width="1400" Height="700" Opacity="0.5">
+                    <Canvas.RenderTransform>
+                        <TranslateTransform X="0" Y="0"/>
+                    </Canvas.RenderTransform>
+                    <Ellipse Width="12" Height="12" Canvas.Left="200" Canvas.Top="200" Fill="#7B3FD1" Opacity="0.8">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="4"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                    <Ellipse Width="9" Height="9" Canvas.Left="600" Canvas.Top="350" Fill="#A946FF" Opacity="0.7">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="2"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                    <Ellipse Width="5" Height="5" Canvas.Left="850" Canvas.Top="80" Fill="#FF72E2" Opacity="0.9">
                         <Ellipse.Effect>
                             <BlurEffect Radius="1"/>
                         </Ellipse.Effect>
@@ -424,8 +480,8 @@
                                         <Button x:Name="UpdateButton" Content="Update Available" 
                                                Style="{StaticResource WarningButton}" 
                                                Visibility="Collapsed" Click="Update_Click"/>
-                                        <Button x:Name="ChangelogButton" Content="View Changelog" 
-                                               Style="{StaticResource PrimaryButton}" 
+                                        <Button x:Name="ChangelogButton" Content="View Changelog" Width="100" Height="25"
+                                               Style="{StaticResource PrimaryButton}" FontSize="10"
                                                Visibility="Collapsed" Click="Changelog_Click" Margin="0,5,0,0"/>
                                     </StackPanel>
                                 </Border>
@@ -497,6 +553,21 @@
                                         <TextBlock x:Name="AdminRequirementText" Text="• Administrator rights" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
                                     </StackPanel>
                                 </Border>
+
+                                <Separator Margin="0,15" Background="#A946FF"/>
+
+                                <!-- Autores -->
+                                <TextBlock x:Name="DevsTitle" Text="Devs" FontWeight="Bold" 
+                                          Foreground="#FFD9FF" Margin="0,0,0,5"/>
+                                <Border Background="#15011E" CornerRadius="8" Padding="12">
+                                    <StackPanel>
+                                        <TextBlock x:Name="Author1Text" Text="• [Nombre del Autor 1]" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
+                                        <TextBlock x:Name="Author2Text" Text="• [Nombre del Autor 2]" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
+                                        <TextBlock x:Name="Author3Text" Text="• [Nombre del Autor 3]" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Separator Margin="0,15" Background="#A946FF"/>
                             
                                 <!-- Imagen destacada -->
                                 <Border Background="#15011E" CornerRadius="10" Padding="10" Margin="0,15,0,0">

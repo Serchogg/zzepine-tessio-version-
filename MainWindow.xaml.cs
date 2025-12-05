@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Controls;
+using System.Windows.Media;
 using GTAVInjector.Core;
 using GTAVInjector.Models;
 using Microsoft.Win32;
@@ -342,6 +344,7 @@ namespace GTAVInjector
                 if (GameTypeTitle != null) GameTypeTitle.Text = LocalizationManager.GetString("GameType");
                 if (LauncherTitle != null) LauncherTitle.Text = LocalizationManager.GetString("Launcher");
                 if (RequirementsTitle != null) RequirementsTitle.Text = LocalizationManager.GetString("Requirements");
+                if (DevsTitle != null) DevsTitle.Text = LocalizationManager.GetString("Devs");
                 if (VersionStatusTitle != null) VersionStatusTitle.Text = LocalizationManager.GetString("VersionStatus");
                 if (UpdateButton != null) UpdateButton.Content = LocalizationManager.GetString("UpdateAvailable");
                 if (ChangelogButton != null) ChangelogButton.Content = LocalizationManager.GetString("ViewChangelog");
@@ -844,6 +847,49 @@ namespace GTAVInjector
             }
         }
 
+        // Evento para efecto de parallax interactivo con el mouse
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                var canvas = sender as Canvas;
+                if (canvas != null && BackgroundTranslate != null)
+                {
+                    var position = e.GetPosition(canvas);
+                    var centerX = canvas.ActualWidth / 2;
+                    var centerY = canvas.ActualHeight / 2;
+
+                    // Calcular offset basado en la posición del mouse (más sutil)
+                    var offsetX = (position.X - centerX) / centerX * 5; // Reducido para ser más sutil
+                    var offsetY = (position.Y - centerY) / centerY * 3;
+
+                    // Aplicar efecto parallax suave a la imagen de fondo
+                    BackgroundTranslate.X = offsetX;
+                    BackgroundTranslate.Y = offsetY;
+
+                    // Aplicar efecto a las capas de partículas con diferentes velocidades
+                    var layer1Transform = ParallaxLayer1?.RenderTransform as TranslateTransform;
+                    if (layer1Transform != null)
+                    {
+                        layer1Transform.X = offsetX * 0.3;
+                        layer1Transform.Y = offsetY * 0.2;
+                    }
+
+                    var layer2Transform = ParallaxLayer2?.RenderTransform as TranslateTransform;
+                    if (layer2Transform != null)
+                    {
+                        layer2Transform.X = offsetX * 0.5;
+                        layer2Transform.Y = offsetY * 0.4;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejo silencioso de errores
+                System.Diagnostics.Debug.WriteLine($"Error en Canvas_MouseMove: {ex.Message}");
+            }
+        }
+
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Close();
@@ -853,30 +899,31 @@ namespace GTAVInjector
         {
             try
             {
-                // Buscar y comenzar la animación de parallax
-                var storyboard = (System.Windows.Media.Animation.Storyboard)FindResource("ParallaxAnimation");
+                // Buscar y comenzar la nueva animación de fondo GTA V
+                var storyboard = (System.Windows.Media.Animation.Storyboard)FindResource("BackgroundAnimation");
                 if (storyboard != null)
                 {
                     // Forzar inicio de la animación en este window
                     storyboard.Begin(this, true);
-                    System.Diagnostics.Debug.WriteLine("Animación parallax iniciada correctamente");
+                    System.Diagnostics.Debug.WriteLine("Animación de fondo GTA V iniciada correctamente");
                     
-                    // Verificar que las capas estén visibles
-                    if (ParallaxLayer1 != null && ParallaxLayer2 != null)
+                    // Verificar que los elementos estén visibles
+                    if (BackgroundImage != null && ParallaxLayer1 != null && ParallaxLayer2 != null)
                     {
+                        BackgroundImage.Visibility = Visibility.Visible;
                         ParallaxLayer1.Visibility = Visibility.Visible;
                         ParallaxLayer2.Visibility = Visibility.Visible;
-                        System.Diagnostics.Debug.WriteLine("Capas parallax configuradas como visibles");
+                        System.Diagnostics.Debug.WriteLine("Elementos de fondo configurados como visibles");
                     }
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("No se pudo encontrar la animación ParallaxAnimation");
+                    System.Diagnostics.Debug.WriteLine("No se pudo encontrar la animación BackgroundAnimation");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error al iniciar animación parallax: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error al iniciar animación de fondo: {ex.Message}");
             }
         }
 
