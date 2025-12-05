@@ -42,7 +42,11 @@ namespace GTAVInjector.Core
                 ["NoDllsEnabled"] = "No DLLs enabled for injection",
                 ["AutoInjecting"] = "Auto-injecting DLLs...",
                 ["UpdateConfirm"] = "Do you want to download and install the update?",
-                ["ViewChangelog"] = "View Changelog"
+                ["ViewChangelog"] = "View Changelog",
+                ["VcRequirement"] = "• VC++ Redist x86 & x64",
+                ["GtaRequirement"] = "• GTA V installed",
+                ["AdminRequirement"] = "• Administrator rights",
+                ["Language"] = "Language"
             },
             ["es"] = new Dictionary<string, string>
             {
@@ -76,7 +80,11 @@ namespace GTAVInjector.Core
                 ["NoDllsEnabled"] = "No hay DLLs habilitadas para inyectar",
                 ["AutoInjecting"] = "Auto-inyectando DLLs...",
                 ["UpdateConfirm"] = "¿Deseas descargar e instalar la actualización?",
-                ["ViewChangelog"] = "Ver Changelog"
+                ["ViewChangelog"] = "Ver Changelog",
+                ["VcRequirement"] = "• VC++ Redistribuible x86 y x64",
+                ["GtaRequirement"] = "• GTA V instalado",
+                ["AdminRequirement"] = "• Permisos de administrador",
+                ["Language"] = "Idioma"
             }
         };
 

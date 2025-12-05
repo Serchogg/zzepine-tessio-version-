@@ -15,6 +15,8 @@ namespace GTAVInjector
         public ObservableCollection<DllEntry> DllEntries { get; set; }
         private System.Windows.Threading.DispatcherTimer? _gameCheckTimer;
         private System.Windows.Threading.DispatcherTimer? _autoInjectTimer;
+        private bool _gameWasRunning = false;
+        private bool _autoInjectionCompleted = false;
 
         public MainWindow()
         {
@@ -32,6 +34,10 @@ namespace GTAVInjector
             {
                 UpdateUI();
                 UpdateVersionText();
+                // Delay para asegurar que la UI esté completamente renderizada
+                this.Dispatcher.BeginInvoke(new Action(() => {
+                    StartParallaxAnimation();
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
             };
         }
 
@@ -67,6 +73,13 @@ namespace GTAVInjector
             
             // Cargar auto-inject
             AutoInjectCheckbox.IsChecked = settings.AutoInject;
+            
+            // Iniciar timer de auto-inject si está habilitado
+            if (settings.AutoInject)
+            {
+                System.Diagnostics.Debug.WriteLine("Auto-inject está habilitado en configuración - iniciando timer");
+                _autoInjectTimer?.Start();
+            }
             
             // Cargar idioma
             var langTag = settings.Language;
@@ -171,6 +184,8 @@ namespace GTAVInjector
                 LaunchButton.IsEnabled = false;
                 InjectButton.IsEnabled = !isOutdated;
                 KillButton.IsEnabled = !isOutdated;
+                
+                _gameWasRunning = true;
             }
             else
             {
@@ -182,31 +197,87 @@ namespace GTAVInjector
                 InjectButton.IsEnabled = false;
                 KillButton.IsEnabled = false;
                 
-                // Resetear estados de inyección
-                foreach (var dll in DllEntries)
+                // Si el juego estaba ejecutándose antes y ahora no, resetear el estado
+                if (_gameWasRunning)
                 {
-                    dll.Status = LocalizationManager.GetString("NotInjected");
+                    _autoInjectionCompleted = false;
+                    _gameWasRunning = false;
+                    
+                    // Resetear estados de inyección
+                    foreach (var dll in DllEntries)
+                    {
+                        dll.Status = LocalizationManager.GetString("NotInjected");
+                    }
+                    
+                    System.Diagnostics.Debug.WriteLine("Juego cerrado - Estado de auto-inyección reseteado");
+                    
+                    // Asegurar que el timer de auto-inject siga activo si está habilitado
+                    if (SettingsManager.Settings.AutoInject && _autoInjectTimer != null && !_autoInjectTimer.IsEnabled)
+                    {
+                        _autoInjectTimer.Start();
+                        System.Diagnostics.Debug.WriteLine("Timer de auto-inject reiniciado tras cierre del juego");
+                    }
                 }
             }
         }
 
         private async void AutoInjectTimer_Tick(object? sender, EventArgs e)
         {
-            if (!SettingsManager.Settings.AutoInject)
-                return;
-            
-            if (!InjectionManager.IsGameRunning())
-                return;
-            
-            // Verificar si hay DLLs no inyectadas
-            var notInjected = DllEntries.Where(d => d.Enabled && 
-                d.Status == LocalizationManager.GetString("NotInjected")).ToList();
-            
-            if (notInjected.Any())
+            try
             {
-                StatusText.Text = LocalizationManager.GetString("AutoInjecting");
-                await Task.Delay(2000); // Esperar a que el juego cargue completamente
-                await InjectDllsAsync();
+                // Debug logging
+                System.Diagnostics.Debug.WriteLine($"AutoInjectTimer_Tick - AutoInject: {SettingsManager.Settings.AutoInject}, GameRunning: {InjectionManager.IsGameRunning()}, Completed: {_autoInjectionCompleted}");
+                
+                if (!SettingsManager.Settings.AutoInject)
+                {
+                    System.Diagnostics.Debug.WriteLine("Auto-inject deshabilitado - saliendo del timer");
+                    return;
+                }
+                
+                if (!InjectionManager.IsGameRunning())
+                {
+                    System.Diagnostics.Debug.WriteLine("Juego no ejecutándose - saliendo del timer");
+                    return;
+                }
+                
+                // Si ya se completó la auto-inyección para esta sesión del juego, no hacer nada
+                if (_autoInjectionCompleted)
+                {
+                    System.Diagnostics.Debug.WriteLine("Auto-inyección ya completada para esta sesión - saliendo del timer");
+                    return;
+                }
+                
+                // Verificar si hay DLLs habilitadas no inyectadas
+                var notInjected = DllEntries.Where(d => d.Enabled && 
+                    d.Status == LocalizationManager.GetString("NotInjected")).ToList();
+                
+                System.Diagnostics.Debug.WriteLine($"DLLs habilitadas no inyectadas: {notInjected.Count}");
+                
+                if (notInjected.Any())
+                {
+                    System.Diagnostics.Debug.WriteLine("Iniciando auto-inyección...");
+                    StatusText.Text = LocalizationManager.GetString("AutoInjecting");
+                    await Task.Delay(3000); // Esperar más tiempo a que el juego cargue completamente
+                    await InjectDllsAsync();
+                    
+                    // Verificar si todas las DLLs habilitadas fueron inyectadas exitosamente
+                    var stillNotInjected = DllEntries.Where(d => d.Enabled && 
+                        d.Status == LocalizationManager.GetString("NotInjected")).ToList();
+                    
+                    if (!stillNotInjected.Any())
+                    {
+                        _autoInjectionCompleted = true;
+                        System.Diagnostics.Debug.WriteLine("Auto-inyección completada para esta sesión del juego");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Auto-inyección parcial - {stillNotInjected.Count} DLLs aún no inyectadas");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error en AutoInjectTimer_Tick: {ex.Message}");
             }
         }
 
@@ -227,6 +298,14 @@ namespace GTAVInjector
                 if (VersionStatusTitle != null) VersionStatusTitle.Text = LocalizationManager.GetString("VersionStatus");
                 if (UpdateButton != null) UpdateButton.Content = LocalizationManager.GetString("UpdateAvailable");
                 if (ChangelogButton != null) ChangelogButton.Content = LocalizationManager.GetString("ViewChangelog");
+                
+                // Actualizar textos de requisitos
+                if (VcRequirementText != null) VcRequirementText.Text = LocalizationManager.GetString("VcRequirement");
+                if (GtaRequirementText != null) GtaRequirementText.Text = LocalizationManager.GetString("GtaRequirement");
+                if (AdminRequirementText != null) AdminRequirementText.Text = LocalizationManager.GetString("AdminRequirement");
+                
+                // Actualizar texto "Idioma"
+                if (LanguageLabel != null) LanguageLabel.Text = LocalizationManager.GetString("Language");
                 
                 // Actualizar botones "Remove" en la lista de DLLs
                 UpdateRemoveButtonsText();
@@ -428,7 +507,7 @@ namespace GTAVInjector
                     {
                         case InjectionResult.INJECT_OK:
                             MostrarEstado("Estado: TSV2 Cargado exitosamente.", "Inyectado", System.Windows.Media.Brushes.LimeGreen);
-                            dll.Status = "Inyectado exitosamente";
+                            dll.Status = "Inyectado";
                             injected++;
                             break;
                         case InjectionResult.ERROR_OPEN_PROCESS:
@@ -520,13 +599,22 @@ namespace GTAVInjector
 
         private void AutoInject_Changed(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Settings.AutoInject = AutoInjectCheckbox.IsChecked == true;
+            bool isEnabled = AutoInjectCheckbox.IsChecked == true;
+            SettingsManager.Settings.AutoInject = isEnabled;
             SettingsManager.SaveSettings();
             
-            if (SettingsManager.Settings.AutoInject)
+            if (isEnabled)
+            {
+                // Resetear estado cuando se activa manualmente
+                _autoInjectionCompleted = false;
                 _autoInjectTimer?.Start();
+                System.Diagnostics.Debug.WriteLine("Auto-inject activado manualmente - timer iniciado y estado reseteado");
+            }
             else
+            {
                 _autoInjectTimer?.Stop();
+                System.Diagnostics.Debug.WriteLine("Auto-inject desactivado manualmente - timer detenido");
+            }
         }
 
         private void LanguageSelector_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -560,6 +648,16 @@ namespace GTAVInjector
                             StatusText.Text = "Ready";
                     }
                 }
+            }
+        }
+
+        private void ComboBox_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Abrir el dropdown del ComboBox cuando se hace clic en cualquier parte
+            if (LanguageSelector != null && e.LeftButton == MouseButtonState.Pressed)
+            {
+                LanguageSelector.IsDropDownOpen = !LanguageSelector.IsDropDownOpen;
+                e.Handled = true; // Evitar que el evento se propague
             }
         }
 
@@ -680,6 +778,37 @@ namespace GTAVInjector
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void StartParallaxAnimation()
+        {
+            try
+            {
+                // Buscar y comenzar la animación de parallax
+                var storyboard = (System.Windows.Media.Animation.Storyboard)FindResource("ParallaxAnimation");
+                if (storyboard != null)
+                {
+                    // Forzar inicio de la animación en este window
+                    storyboard.Begin(this, true);
+                    System.Diagnostics.Debug.WriteLine("Animación parallax iniciada correctamente");
+                    
+                    // Verificar que las capas estén visibles
+                    if (ParallaxLayer1 != null && ParallaxLayer2 != null)
+                    {
+                        ParallaxLayer1.Visibility = Visibility.Visible;
+                        ParallaxLayer2.Visibility = Visibility.Visible;
+                        System.Diagnostics.Debug.WriteLine("Capas parallax configuradas como visibles");
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("No se pudo encontrar la animación ParallaxAnimation");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al iniciar animación parallax: {ex.Message}");
+            }
         }
 
         protected override void OnClosed(EventArgs e)

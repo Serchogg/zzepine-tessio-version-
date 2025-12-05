@@ -14,14 +14,22 @@
         ResizeMode="NoResize">
     
     <Window.Resources>
-        <!-- Animación de parallax -->
+        <!-- Animación de parallax mejorada -->
         <Storyboard x:Key="ParallaxAnimation" RepeatBehavior="Forever">
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer1"
-                           Storyboard.TargetProperty="(Canvas.Left)"
-                           From="0" To="-100" Duration="0:0:20" AutoReverse="True"/>
+                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                           From="0" To="-200" Duration="0:0:25" AutoReverse="True">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer2"
-                           Storyboard.TargetProperty="(Canvas.Left)"
-                           From="0" To="-150" Duration="0:0:30" AutoReverse="True"/>
+                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                           From="0" To="-300" Duration="0:0:35" AutoReverse="True">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
         </Storyboard>
     </Window.Resources>
     
@@ -44,17 +52,57 @@
                 </Canvas.Background>
                 
                 <!-- Capa de parallax 1 -->
-                <Canvas x:Name="ParallaxLayer1" Width="1200" Height="700" Opacity="0.35">
-                    <Ellipse Width="360" Height="360" Canvas.Left="60" Canvas.Top="20" Fill="#46125E" Opacity="0.35"/>
-                    <Ellipse Width="260" Height="260" Canvas.Left="720" Canvas.Top="360" Fill="#6B2C80" Opacity="0.28"/>
-                    <Ellipse Width="180" Height="180" Canvas.Left="400" Canvas.Top="180" Fill="#8E4FD1" Opacity="0.22"/>
+                <Canvas x:Name="ParallaxLayer1" Width="1400" Height="700" Opacity="0.8">
+                    <Canvas.RenderTransform>
+                        <TranslateTransform X="0" Y="0"/>
+                    </Canvas.RenderTransform>
+                    <Ellipse Width="300" Height="300" Canvas.Left="50" Canvas.Top="50" Fill="#7B3FD1" Opacity="0.7">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="5"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                    <Ellipse Width="200" Height="200" Canvas.Left="600" Canvas.Top="300" Fill="#A946FF" Opacity="0.8">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="3"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                    <Ellipse Width="150" Height="150" Canvas.Left="350" Canvas.Top="150" Fill="#BB4CFF" Opacity="0.6">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="2"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                    <Ellipse Width="100" Height="100" Canvas.Left="800" Canvas.Top="80" Fill="#D872FF" Opacity="0.9">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="1"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
                 </Canvas>
                 
                 <!-- Capa de parallax 2 -->
-                <Canvas x:Name="ParallaxLayer2" Width="1200" Height="700" Opacity="0.3">
-                    <Ellipse Width="280" Height="280" Canvas.Left="520" Canvas.Top="60" Fill="#A946FF" Opacity="0.2"/>
-                    <Ellipse Width="200" Height="200" Canvas.Left="220" Canvas.Top="460" Fill="#FF72E2" Opacity="0.24"/>
-                    <Ellipse Width="150" Height="150" Canvas.Left="900" Canvas.Top="180" Fill="#D872FF" Opacity="0.18"/>
+                <Canvas x:Name="ParallaxLayer2" Width="1400" Height="700" Opacity="0.7">
+                    <Canvas.RenderTransform>
+                        <TranslateTransform X="0" Y="0"/>
+                    </Canvas.RenderTransform>
+                    <Ellipse Width="250" Height="250" Canvas.Left="450" Canvas.Top="40" Fill="#FF72E2" Opacity="0.6">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="4"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                    <Ellipse Width="180" Height="180" Canvas.Left="150" Canvas.Top="350" Fill="#A946FF" Opacity="0.7">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="3"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                    <Ellipse Width="120" Height="120" Canvas.Left="750" Canvas.Top="200" Fill="#7B3FD1" Opacity="0.8">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="2"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                    <Ellipse Width="80" Height="80" Canvas.Left="900" Canvas.Top="320" Fill="#D872FF" Opacity="0.9">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="1"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
                 </Canvas>
             </Canvas>
             
@@ -92,16 +140,16 @@
                             <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="16"
                                        Foreground="#FF9EFF" VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <StackPanel>
-                                <TextBlock Text="Idioma" FontSize="11" Foreground="#D3B4FF"/>
+                                <TextBlock x:Name="LanguageLabel" Text="Idioma" FontSize="11" Foreground="#D3B4FF"/>
                                 <ComboBox x:Name="LanguageSelector" Width="160" Height="30"
-                                          Background="#3B0F4D" Foreground="#FFFFFF" BorderBrush="#FF9EFF"
+                                          Background="#2A0B3A" Foreground="#FFFFFF" BorderBrush="#A946FF"
                                           Padding="4,0" FontWeight="SemiBold" BorderThickness="1"
                                           FocusVisualStyle="{x:Null}"
                                           SelectionChanged="LanguageSelector_SelectionChanged">
                                     <ComboBox.Style>
                                         <Style TargetType="ComboBox">
-                                            <Setter Property="Background" Value="#3B0F4D"/>
-                                            <Setter Property="BorderBrush" Value="#FF9EFF"/>
+                                            <Setter Property="Background" Value="#2A0B3A"/>
+                                            <Setter Property="BorderBrush" Value="#A946FF"/>
                                             <Setter Property="Foreground" Value="#FFFFFF"/>
                                             <Setter Property="OverridesDefaultStyle" Value="True"/>
                                             <Setter Property="Template">
@@ -111,7 +159,8 @@
                                                                 Background="{TemplateBinding Background}"
                                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                                                CornerRadius="4">
+                                                                CornerRadius="4"
+                                                                MouseLeftButtonDown="ComboBox_MouseDown">
                                                             <Grid>
                                                                 <Grid.ColumnDefinitions>
                                                                     <ColumnDefinition Width="*"/>
@@ -182,15 +231,15 @@
                                                         </Border>
                                                         <ControlTemplate.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="MainBorder" Property="Background" Value="#A946FF"/>
+                                                                <Setter TargetName="MainBorder" Property="Background" Value="#3B0F4D"/>
                                                                 <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FF9EFF"/>
                                                             </Trigger>
                                                             <Trigger Property="IsFocused" Value="True">
-                                                                <Setter TargetName="MainBorder" Property="Background" Value="#A946FF"/>
+                                                                <Setter TargetName="MainBorder" Property="Background" Value="#3B0F4D"/>
                                                                 <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FF9EFF"/>
                                                             </Trigger>
                                                             <Trigger Property="IsDropDownOpen" Value="True">
-                                                                <Setter TargetName="MainBorder" Property="Background" Value="#A946FF"/>
+                                                                <Setter TargetName="MainBorder" Property="Background" Value="#3B0F4D"/>
                                                                 <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FF9EFF"/>
                                                             </Trigger>
                                                         </ControlTemplate.Triggers>
@@ -247,7 +296,7 @@
             </Border>
 
     <!-- Contenido principal -->
-                <Grid Grid.Row="1" Margin="0" Background="#150120">
+                <Grid Grid.Row="1" Margin="0" Background="Transparent">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="20"/>
@@ -255,7 +304,7 @@
                     </Grid.ColumnDefinitions>
                     
                     <!-- Panel izquierdo - Lista de DLLs -->
-                    <Border Grid.Column="0" Background="#1F012F" CornerRadius="10" Padding="18">
+                    <Border Grid.Column="0" Background="#1F012F99" CornerRadius="10" Padding="18">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -311,8 +360,8 @@
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="30"/>
                                                 <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="100"/>
-                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="90"/>
+                                                <ColumnDefinition Width="70"/>
                                             </Grid.ColumnDefinitions>
                                             
                                             <CheckBox Grid.Column="0" IsChecked="{Binding Enabled}" 
@@ -320,7 +369,8 @@
                                             <TextBlock Grid.Column="1" Text="{Binding FileName}" 
                                                       Foreground="#FFFFFF" VerticalAlignment="Center" Margin="10,0"/>
                                             <TextBlock Grid.Column="2" Text="{Binding Status}" 
-                                                      VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                      VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                      FontSize="11" TextWrapping="Wrap">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <Style.Triggers>
@@ -336,7 +386,8 @@
                                             </TextBlock>
                                             <Button Grid.Column="3" x:Name="RemoveButton"
                                                    Style="{StaticResource DangerButton}"
-                                                   Click="RemoveDll_Click" Tag="{Binding}">
+                                                   Click="RemoveDll_Click" Tag="{Binding}"
+                                                   FontSize="10" Padding="8,4">
                                                 <Button.Content>
                                                     <TextBlock x:Name="RemoveButtonText" Text="Quitar"/>
                                                 </Button.Content>
@@ -360,7 +411,7 @@
                     </Border>
                     
                     <!-- Panel derecho - Configuración -->
-                    <Border Grid.Column="2" Background="#1F012F" CornerRadius="10" Padding="18">
+                    <Border Grid.Column="2" Background="#1F012F99" CornerRadius="10" Padding="18">
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel>
                                 <!-- Estatus de versión -->
@@ -441,9 +492,9 @@
                                     <StackPanel>
                                         <TextBlock Text="• Windows 10/11 (64-bit)" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
                                         <TextBlock Text="• .NET 8.0 Runtime" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
-                                        <TextBlock Text="• VC++ Redist x86 &amp; x64" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
-                                        <TextBlock Text="• GTA V installed" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
-                                        <TextBlock Text="• Administrator rights" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
+                                        <TextBlock x:Name="VcRequirementText" Text="• VC++ Redist x86 &amp; x64" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
+                                        <TextBlock x:Name="GtaRequirementText" Text="• GTA V installed" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
+                                        <TextBlock x:Name="AdminRequirementText" Text="• Administrator rights" Foreground="#D3B4FF" FontSize="11" Margin="0,2"/>
                                     </StackPanel>
                                 </Border>
                             
