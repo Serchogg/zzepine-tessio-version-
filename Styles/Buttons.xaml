@@ -218,16 +218,17 @@
                     <Border x:Name="WindowButtonBorder"
                             Background="Transparent"
                             BorderThickness="0">
-                        <ContentPresenter HorizontalAlignment="Center" 
+                        <ContentPresenter x:Name="ContentPresenter" 
+                                        HorizontalAlignment="Center" 
                                         VerticalAlignment="Center"
                                         TextElement.Foreground="White"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="WindowButtonBorder" Property="Background" Value="#A946FF"/>
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="#A946FF"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="WindowButtonBorder" Property="Background" Value="#8B3DD9"/>
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="#8B3DD9"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -242,16 +243,17 @@
                     <Border x:Name="CloseButtonBorder"
                             Background="Transparent"
                             BorderThickness="0">
-                        <ContentPresenter HorizontalAlignment="Center" 
+                        <ContentPresenter x:Name="CloseContentPresenter"
+                                        HorizontalAlignment="Center" 
                                         VerticalAlignment="Center"
                                         TextElement.Foreground="White"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="CloseButtonBorder" Property="Background" Value="#FF4FD8"/>
+                            <Setter TargetName="CloseContentPresenter" Property="TextElement.Foreground" Value="#FF4FD8"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="CloseButtonBorder" Property="Background" Value="#E63DB5"/>
+                            <Setter TargetName="CloseContentPresenter" Property="TextElement.Foreground" Value="#E63DB5"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

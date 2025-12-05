@@ -41,7 +41,8 @@ namespace GTAVInjector.Core
                 ["GameKilled"] = "Game process terminated",
                 ["NoDllsEnabled"] = "No DLLs enabled for injection",
                 ["AutoInjecting"] = "Auto-injecting DLLs...",
-                ["UpdateConfirm"] = "Do you want to download and install the update?"
+                ["UpdateConfirm"] = "Do you want to download and install the update?",
+                ["ViewChangelog"] = "View Changelog"
             },
             ["es"] = new Dictionary<string, string>
             {
@@ -74,7 +75,8 @@ namespace GTAVInjector.Core
                 ["GameKilled"] = "Proceso del juego terminado",
                 ["NoDllsEnabled"] = "No hay DLLs habilitadas para inyectar",
                 ["AutoInjecting"] = "Auto-inyectando DLLs...",
-                ["UpdateConfirm"] = "¿Deseas descargar e instalar la actualización?"
+                ["UpdateConfirm"] = "¿Deseas descargar e instalar la actualización?",
+                ["ViewChangelog"] = "Ver Changelog"
             }
         };
 

@@ -31,7 +31,7 @@
         </EventTrigger>
     </Window.Triggers>
 
-    <Border BorderBrush="#FF9EFF" BorderThickness="2" CornerRadius="0">
+    <Border BorderBrush="#FF9EFF" BorderThickness="2" CornerRadius="15" Padding="0">
         <Grid MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
             <!-- Fondo animado con parallax -->
             <Canvas ClipToBounds="True">
@@ -59,7 +59,7 @@
             </Canvas>
             
             <!-- Contenido principal -->
-            <Grid Margin="10">
+            <Grid Margin="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="60"/>
                     <RowDefinition Height="*"/>
@@ -67,7 +67,7 @@
                 </Grid.RowDefinitions>
                 
                 <!-- Barra de título personalizada -->
-                <Border Grid.Row="0" Background="#1A0128" CornerRadius="0" Margin="0">
+                <Border Grid.Row="0" Background="#1A0128" CornerRadius="13,13,0,0" Margin="0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -247,7 +247,7 @@
             </Border>
 
     <!-- Contenido principal -->
-                <Grid Grid.Row="1" Margin="20">
+                <Grid Grid.Row="1" Margin="0" Background="#150120">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="20"/>
@@ -255,7 +255,7 @@
                     </Grid.ColumnDefinitions>
                     
                     <!-- Panel izquierdo - Lista de DLLs -->
-                    <Border Grid.Column="0" Background="#1F012F" CornerRadius="0" Padding="18">
+                    <Border Grid.Column="0" Background="#1F012F" CornerRadius="10" Padding="18">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -360,7 +360,7 @@
                     </Border>
                     
                     <!-- Panel derecho - Configuración -->
-                    <Border Grid.Column="2" Background="#1F012F" CornerRadius="0" Padding="18">
+                    <Border Grid.Column="2" Background="#1F012F" CornerRadius="10" Padding="18">
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel>
                                 <!-- Estatus de versión -->
@@ -373,6 +373,9 @@
                                         <Button x:Name="UpdateButton" Content="Update Available" 
                                                Style="{StaticResource WarningButton}" 
                                                Visibility="Collapsed" Click="Update_Click"/>
+                                        <Button x:Name="ChangelogButton" Content="View Changelog" 
+                                               Style="{StaticResource PrimaryButton}" 
+                                               Visibility="Collapsed" Click="Changelog_Click" Margin="0,5,0,0"/>
                                     </StackPanel>
                                 </Border>
                                 
@@ -457,7 +460,7 @@
                 </Grid>
                 
                 <!-- Barra de estado -->
-                <Border Grid.Row="2" Background="#15011E" CornerRadius="0" Padding="12,6" Margin="0">
+                <Border Grid.Row="2" Background="#15011E" CornerRadius="0,0,13,13" Padding="12,6" Margin="0">
                     <Grid>
                         <TextBlock x:Name="StatusText" Text="Listo" Foreground="#FF9EFF" 
                                   VerticalAlignment="Center"/>

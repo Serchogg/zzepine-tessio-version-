@@ -130,6 +130,7 @@ namespace GTAVInjector
                 VersionStatusText.Foreground = System.Windows.Media.Brushes.Red;
                 UpdateButton.Visibility = Visibility.Visible;
                 UpdateButton.Content = "Ir a Discord para Actualizar";
+                ChangelogButton.Visibility = Visibility.Collapsed;
                 
                 // DESHABILITAR LOS 3 BOTONES PRINCIPALES
                 LaunchButton.IsEnabled = false;
@@ -141,6 +142,7 @@ namespace GTAVInjector
                 VersionStatusText.Text = $"ACTUALIZADO - v{VersionChecker.GetCurrentVersion()}";
                 VersionStatusText.Foreground = System.Windows.Media.Brushes.LimeGreen;
                 UpdateButton.Visibility = Visibility.Collapsed;
+                ChangelogButton.Visibility = Visibility.Visible;
                 
                 // Rehabilitar botones según estado del juego
                 UpdateGameStatus();
@@ -224,6 +226,7 @@ namespace GTAVInjector
                 if (RequirementsTitle != null) RequirementsTitle.Text = LocalizationManager.GetString("Requirements");
                 if (VersionStatusTitle != null) VersionStatusTitle.Text = LocalizationManager.GetString("VersionStatus");
                 if (UpdateButton != null) UpdateButton.Content = LocalizationManager.GetString("UpdateAvailable");
+                if (ChangelogButton != null) ChangelogButton.Content = LocalizationManager.GetString("ViewChangelog");
                 
                 // Actualizar botones "Remove" en la lista de DLLs
                 UpdateRemoveButtonsText();
@@ -578,6 +581,22 @@ namespace GTAVInjector
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al abrir Discord: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Changelog_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "https://github.com/Tessio/TessioScript-Launcher/releases",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al abrir changelog: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
