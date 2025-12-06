@@ -28,6 +28,9 @@ namespace GTAVInjector
             DllEntries = new ObservableCollection<DllEntry>();
             DllListView.ItemsSource = DllEntries;
             
+            // VALIDACIÓN CRÍTICA DE VERSIÓN AL INICIO
+            _ = ValidateVersionOnStartup();
+            
             LoadSettings();
             InitializeTimers();
             CheckForUpdates();
@@ -184,6 +187,87 @@ namespace GTAVInjector
             {
                 Dispatcher.Invoke(() => UpdateVersionStatus(isOutdated));
             });
+        }
+
+        /// <summary>
+        /// VALIDACIÓN CRÍTICA DE VERSIÓN AL INICIO DE LA APLICACIÓN
+        /// Esta función bloquea completamente el inyector si está desactualizado
+        /// </summary>
+        private async Task ValidateVersionOnStartup()
+        {
+            try
+            {
+                // Mostrar mensaje de verificación
+                if (VersionStatusText != null)
+                {
+                    VersionStatusText.Text = "🔍 VERIFICANDO VERSIÓN...";
+                    VersionStatusText.Foreground = System.Windows.Media.Brushes.Yellow;
+                }
+
+                // Verificar versión
+                bool isOutdated = await VersionChecker.CheckForUpdatesAsync();
+                
+                if (isOutdated)
+                {
+                    // BLOQUEO TOTAL DE LA APLICACIÓN
+                    await ShowVersionBlockDialog();
+                }
+                else
+                {
+                    // Versión correcta - continuar normalmente
+                    if (VersionStatusText != null)
+                    {
+                        VersionStatusText.Text = "✅ VERSIÓN VALIDADA";
+                        VersionStatusText.Foreground = System.Windows.Media.Brushes.LimeGreen;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Si hay error de conexión, permitir uso pero mostrar advertencia
+                if (VersionStatusText != null)
+                {
+                    VersionStatusText.Text = "⚠️ NO SE PUDO VERIFICAR VERSIÓN";
+                    VersionStatusText.Foreground = System.Windows.Media.Brushes.Orange;
+                }
+                System.Diagnostics.Debug.WriteLine($"Error en validación de versión: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Muestra diálogo de bloqueo y cierra la aplicación si está desactualizada
+        /// </summary>
+        private async Task ShowVersionBlockDialog()
+        {
+            var currentVersion = VersionChecker.GetCurrentVersion();
+            var latestVersion = VersionChecker.GetLatestVersion();
+            
+            var result = MessageBox.Show(
+                $"🚫 ACCESO DENEGADO\n\n" +
+                $"Tu versión está DESACTUALIZADA y no puede ser utilizada.\n\n" +
+                $"📱 Versión actual: v{currentVersion}\n" +
+                $"🔄 Versión requerida: v{latestVersion}\n\n" +
+                $"Para continuar usando el inyector debes actualizar.\n\n" +
+                $"¿Quieres ir al Discord para descargar la nueva versión?",
+                "🔒 VERSIÓN DESACTUALIZADA - ACCESO BLOQUEADO",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Stop);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    VersionChecker.OpenDiscordUpdate();
+                }
+                catch
+                {
+                    // Ignorar error al abrir Discord
+                }
+            }
+
+            // CERRAR APLICACIÓN FORZOSAMENTE
+            await Task.Delay(500); // Pequeño delay para que se vea el mensaje
+            Application.Current.Shutdown();
         }
 
         private void UpdateGameStatus()
