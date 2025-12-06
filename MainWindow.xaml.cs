@@ -25,11 +25,17 @@ namespace GTAVInjector
         public MainWindow()
         {
             InitializeComponent();
+            
+            // 🛡️ VALIDACIÓN CRÍTICA BLOQUEANTE DE VERSIÓN - EJECUTA ANTES QUE NADA
+            if (!ValidateVersionBlocking())
+            {
+                // Si la validación falla, cerrar inmediatamente
+                Environment.Exit(0);
+                return;
+            }
+            
             DllEntries = new ObservableCollection<DllEntry>();
             DllListView.ItemsSource = DllEntries;
-            
-            // VALIDACIÓN CRÍTICA DE VERSIÓN AL INICIO
-            _ = ValidateVersionOnStartup();
             
             LoadSettings();
             InitializeTimers();
@@ -190,8 +196,80 @@ namespace GTAVInjector
         }
 
         /// <summary>
-        /// VALIDACIÓN CRÍTICA DE VERSIÓN AL INICIO DE LA APLICACIÓN
-        /// Esta función bloquea completamente el inyector si está desactualizado
+        /// 🛡️ VALIDACIÓN CRÍTICA BLOQUEANTE DE VERSIÓN
+        /// Se ejecuta SÍNCRONAMENTE antes de cargar cualquier cosa
+        /// Retorna false si debe cerrarse la aplicación
+        /// </summary>
+        private bool ValidateVersionBlocking()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("🔍 INICIANDO VALIDACIÓN CRÍTICA DE VERSIÓN...");
+                
+                // Ejecutar verificación de forma SÍNCRONA
+                var task = VersionChecker.CheckForUpdatesAsync();
+                task.Wait(10000); // Esperar máximo 10 segundos
+                
+                if (!task.IsCompleted)
+                {
+                    // Timeout - permitir uso offline
+                    System.Diagnostics.Debug.WriteLine("⏰ TIMEOUT en verificación - permitiendo uso offline");
+                    return true;
+                }
+                
+                bool isOutdated = task.Result;
+                
+                if (isOutdated)
+                {
+                    // MOSTRAR DIÁLOGO BLOQUEANTE
+                    var currentVersion = VersionChecker.GetCurrentVersion();
+                    var latestVersion = VersionChecker.GetLatestVersion();
+                    
+                    System.Diagnostics.Debug.WriteLine($"🚫 VERSIÓN DESACTUALIZADA DETECTADA: {currentVersion} < {latestVersion}");
+                    
+                    var result = MessageBox.Show(
+                        $"🚫 ACCESO DENEGADO\n\n" +
+                        $"Tu versión está DESACTUALIZADA y no puede ser utilizada.\n\n" +
+                        $"📱 Versión actual: v{currentVersion}\n" +
+                        $"🔄 Versión requerida: v{latestVersion}\n\n" +
+                        $"Para continuar usando el inyector debes actualizar.\n\n" +
+                        $"¿Quieres ir al Discord para descargar la nueva versión?\n\n" +
+                        $"La aplicación se cerrará después de este mensaje.",
+                        "🔒 VERSIÓN DESACTUALIZADA - ACCESO BLOQUEADO",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Stop);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            VersionChecker.OpenDiscordUpdate();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Error abriendo Discord: {ex.Message}");
+                        }
+                    }
+                    
+                    System.Diagnostics.Debug.WriteLine("🔒 CERRANDO APLICACIÓN POR VERSIÓN DESACTUALIZADA");
+                    return false; // Cerrar aplicación
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("✅ VERSIÓN VALIDADA CORRECTAMENTE");
+                    return true; // Continuar normalmente
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"⚠️ ERROR en validación de versión: {ex.Message}");
+                // En caso de error, permitir uso offline
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// VALIDACIÓN ASÍNCRONA SECUNDARIA (para updates durante ejecución)
         /// </summary>
         private async Task ValidateVersionOnStartup()
         {

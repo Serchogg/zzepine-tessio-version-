@@ -10,7 +10,7 @@ namespace GTAVInjector.Core
     public static class VersionChecker
     {
         // URL del repositorio de GitHub para verificación de versiones
-        private const string VERSION_JSON_URL = "https://raw.githubusercontent.com/Tessio/Translations/master/version_l.txt";
+        private const string VERSION_JSON_URL = "https://raw.githubusercontent.com/Tessio/Translations/refs/heads/master/version_l.txt";
         private const string TESSIO_DISCORD_URL = "https://gtaggs.wirdland.xyz/discord";
         
         // NOTA: La versión actual ahora se obtiene directamente del Assembly (definida en el .csproj)
@@ -22,53 +22,44 @@ namespace GTAVInjector.Core
         private static bool _isOutdated = false;
         private static readonly HttpClient _httpClient = new();
 
-        private static string GetCurrentVersionFromAssembly()
+        // VERSIÓN FIJA DESDE CSPROJ - NO USAR ASSEMBLY
+        private static string GetCurrentVersionFromProject()
         {
-            if (_currentVersion == null)
-            {
-                try
-                {
-                    // Obtener la versión del assembly principal (ejecutable)
-                    _currentVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "2.0.0";
-                    
-                    // Si la versión tiene 4 partes (ej: 2.0.3.0), usar solo las primeras 3
-                    var versionParts = _currentVersion.Split('.');
-                    if (versionParts.Length >= 3)
-                    {
-                        _currentVersion = $"{versionParts[0]}.{versionParts[1]}.{versionParts[2]}";
-                    }
-                }
-                catch
-                {
-                    _currentVersion = "2.0.0"; // Fallback version
-                }
-            }
-            return _currentVersion;
+            // Versión exacta del .csproj (debe actualizarse manualmente aquí)
+            return "1.0.7"; // ⚠️ ACTUALIZAR ESTO CUANDO CAMBIES LA VERSIÓN DEL PROYECTO
         }
         public static async Task<bool> CheckForUpdatesAsync()
         {
             try
             {
-                // Obtener la versión desde el repositorio de GitHub
-                var response = await _httpClient.GetStringAsync(VERSION_JSON_URL);
-                _latestVersion = response.Trim();
+                // OBTENER CONTENIDO DIRECTO DEL ENLACE GITHUB (SIN CACHE NI HEADERS)
+                var githubVersion = await _httpClient.GetStringAsync(VERSION_JSON_URL);
+                _latestVersion = githubVersion.Trim();
+
+                // OBTENER VERSIÓN DEL PROYECTO
+                var currentVersion = GetCurrentVersionFromProject();
+
+                System.Diagnostics.Debug.WriteLine($"📱 VERSIÓN DEL PROYECTO: '{currentVersion}'");
+                System.Diagnostics.Debug.WriteLine($"🌐 VERSIÓN DE GITHUB: '{_latestVersion}'");
 
                 if (!string.IsNullOrEmpty(_latestVersion))
                 {
-                    // Comparar versiones - CORREGIDO: 
-                    // Si la versión local es menor que la del sitio web, está desactualizada
-                    // Si la versión local es igual o mayor, está actualizada
-                    var current = new Version(GetCurrentVersionFromAssembly());
+                    // COMPARACIÓN SIMPLE DE VERSIONES
+                    var current = new Version(currentVersion);
                     var latest = new Version(_latestVersion);
 
-                    _isOutdated = current < latest; // CORREGIDO: era latest > current
+                    _isOutdated = current < latest;
+                    
+                    System.Diagnostics.Debug.WriteLine($"🔍 COMPARACIÓN: {currentVersion} < {_latestVersion} = {_isOutdated}");
+                    
                     return _isOutdated;
                 }
 
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"❌ ERROR: {ex.Message}");
                 return false;
             }
         }
@@ -91,7 +82,7 @@ namespace GTAVInjector.Core
 
         public static string GetCurrentVersion()
         {
-            return GetCurrentVersionFromAssembly();
+            return GetCurrentVersionFromProject();
         }
 
         public static string? GetLatestVersion()
