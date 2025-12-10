@@ -10,11 +10,15 @@ using System.Windows.Media.Effects;
 using GTAVInjector.Core;
 using GTAVInjector.Models;
 using Microsoft.Win32;
+using System.Net.Http;
+using System.Windows.Threading;
 
 namespace GTAVInjector
 {
     public partial class MainWindow : Window
     {
+        private const string TESSIO_DISCORD_URL = "https://gtaggs.wirdland.xyz/discord";
+
         public ObservableCollection<DllEntry> DllEntries { get; set; }
         private System.Windows.Threading.DispatcherTimer? _gameCheckTimer;
         private System.Windows.Threading.DispatcherTimer? _autoInjectTimer;
@@ -22,31 +26,34 @@ namespace GTAVInjector
         private bool _autoInjectionCompleted = false;
         private bool _isLoadingSettings = false; // Bandera para evitar guardado durante carga
 
+        private readonly DispatcherTimer versionCheckTimer = new DispatcherTimer();
+        private string currentLocalVersion = "1.0.7"; // Aquí tu versión
+
         public MainWindow()
         {
             InitializeComponent();
-            
-            // 🛡️ VALIDACIÓN CRÍTICA BLOQUEANTE DE VERSIÓN - EJECUTA ANTES QUE NADA
-            if (!ValidateVersionBlocking())
-            {
-                // Si la validación falla, cerrar inmediatamente
-                Environment.Exit(0);
-                return;
-            }
+
+            // Timer cada 10 segundos
+            versionCheckTimer.Interval = TimeSpan.FromMinutes(5);
+            versionCheckTimer.Tick += VersionCheckTimer_Tick;
+            versionCheckTimer.Start();
+
+            // Revisión al iniciar también
+            _ = CheckVersionAsync();
+
+           
             
             DllEntries = new ObservableCollection<DllEntry>();
             DllListView.ItemsSource = DllEntries;
             
             LoadSettings();
             InitializeTimers();
-            CheckForUpdates();
-            StartVersionMonitoring();
+            
             
             // Mover la llamada a UpdateUI() al evento Loaded para asegurar que los controles estén inicializados
             Loaded += (s, e) => 
             {
                 UpdateUI();
-                UpdateVersionText();
                 // Delay para asegurar que la UI esté completamente renderizada
                 this.Dispatcher.BeginInvoke(new Action(() => {
                     StartParallaxAnimation();
@@ -55,6 +62,84 @@ namespace GTAVInjector
                     System.Diagnostics.Debug.WriteLine("[LOADING] Bandera _isLoadingSettings desactivada - eventos habilitados");
                 }), System.Windows.Threading.DispatcherPriority.Loaded);
             };
+        }
+
+        private async void VersionCheckTimer_Tick(object sender, EventArgs e)
+        {
+            await CheckVersionAsync();
+        }
+
+        private async Task CheckVersionAsync()
+        {
+            // 🟣 Mostrar mensaje mientras se consulta
+            Dispatcher.Invoke(() =>
+            {
+                VersionStatusText.Text = "COMPROBANDO VERSIÓN...";
+                VersionStatusText.Foreground = (Brush)Application.Current.Resources["LavenderBrush"]; // ← COLOR FIJO PARA ESTADO DE CARGA
+            });
+
+            // 🕒 2. Esperar 3 segundos (NO bloquea UI)
+            await Task.Delay(3000);
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    string remoteVersion = await client.GetStringAsync("https://raw.githubusercontent.com/Tessio/Translations/refs/heads/master/version_l.txt");
+                    remoteVersion = remoteVersion.Trim();
+
+                    // Si la versión cambió → actualiza UI
+                    if (remoteVersion != currentLocalVersion)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            VersionStatusText.Text = $"NUEVA VERSIÓN DISPONIBLE: {currentLocalVersion} > {remoteVersion}";
+                            VersionStatusText.Foreground = System.Windows.Media.Brushes.Red;
+
+                            // 🔥 Mostrar botón de actualizar
+                            UpdateButton.Visibility = Visibility.Visible;
+                            UpdateButton.Content = "Actualizar Ahora";
+                            UpdateButton.IsEnabled = true;
+
+                            // Ocultar changelog
+                            ChangelogButton.Visibility = Visibility.Collapsed;
+
+                            // Bloquear funciones
+                            LaunchButton.IsEnabled = false;
+                            InjectButton.IsEnabled = false;
+                            KillButton.IsEnabled = false;
+                        });
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            VersionStatusText.Text = $"ULTIMA VERSIÓN: {currentLocalVersion}";
+                            VersionStatusText.Foreground = System.Windows.Media.Brushes.LightGreen;
+
+                            UpdateButton.Visibility = Visibility.Collapsed;
+
+                            InjectButton.IsEnabled = true;
+                            KillButton.IsEnabled = true;
+                            if (!InjectionManager.IsGameRunning())
+                            {
+                                LaunchButton.IsEnabled = true;
+                                
+                            }
+
+                            // ✅ MOSTRAR EL BOTÓN DE CHANGELOG CUANDO ESTÁ ACTUALIZADO
+                            ChangelogButton.Visibility = Visibility.Visible;  // ← AQUÍ ESTABA FALTANDO
+                        });
+                    }
+                }
+            }
+            catch
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    VersionStatusText.Text = "ERROR AL COMPROBAR VERSIÓN";
+                });
+            }
         }
 
         private void LoadSettings()
@@ -136,285 +221,10 @@ namespace GTAVInjector
             }
         }
 
-        private async void CheckForUpdates()
-        {
-            try
-            {
-                VersionStatusText.Text = LocalizationManager.GetString("CheckingUpdates");
-                var updateAvailable = await VersionChecker.CheckForUpdatesAsync();
-                
-                UpdateVersionStatus(updateAvailable);
-            }
-            catch
-            {
-                VersionStatusText.Text = LocalizationManager.GetString("UpdateCheckFailed");
-                VersionStatusText.Foreground = System.Windows.Media.Brushes.Gray;
-            }
-        }
-
-        private void UpdateVersionText()
-        {
-            if (VersionText != null)
-            {
-                VersionText.Text = $"v{VersionChecker.GetCurrentVersion()}";
-            }
-        }
-
-        private void UpdateVersionStatus(bool isOutdated)
-        {
-            if (isOutdated)
-            {
-                VersionStatusText.Text = $"DESACTUALIZADO - v{VersionChecker.GetCurrentVersion()} → v{VersionChecker.GetLatestVersion()}";
-                VersionStatusText.Foreground = System.Windows.Media.Brushes.Red;
-                UpdateButton.Visibility = Visibility.Visible;
-                UpdateButton.Content = "Ir a Discord para Actualizar";
-                ChangelogButton.Visibility = Visibility.Collapsed;
-                
-                // DESHABILITAR LOS 3 BOTONES PRINCIPALES
-                LaunchButton.IsEnabled = false;
-                InjectButton.IsEnabled = false;
-                KillButton.IsEnabled = false;
-            }
-            else
-            {
-                VersionStatusText.Text = $"ACTUALIZADO - v{VersionChecker.GetCurrentVersion()}";
-                VersionStatusText.Foreground = System.Windows.Media.Brushes.LimeGreen;
-                UpdateButton.Visibility = Visibility.Collapsed;
-                ChangelogButton.Visibility = Visibility.Visible;
-                
-                // Rehabilitar botones según estado del juego
-                UpdateGameStatus();
-            }
-        }
-
-        private void StartVersionMonitoring()
-        {
-            VersionChecker.StartVersionMonitoring(isOutdated =>
-            {
-                Dispatcher.Invoke(() => 
-                {
-                    UpdateVersionStatus(isOutdated);
-                    
-                    // 🚨 BLOQUEO AGRESIVO: Si detecta versión desactualizada durante el uso
-                    if (isOutdated)
-                    {
-                        ShowVersionBlockDialogRealTime();
-                    }
-                });
-            });
-        }
-
-        /// <summary>
-        /// 🚨 BLOQUEO TOTAL EN TIEMPO REAL - Detecta nueva versión durante el uso
-        /// </summary>
-        private async void ShowVersionBlockDialogRealTime()
-        {
-            var currentVersion = VersionChecker.GetCurrentVersion();
-            var latestVersion = VersionChecker.GetLatestVersion();
-            
-            var isSpanish = LocalizationManager.CurrentLanguage.ToLower() == "es";
-            
-            string message, title;
-            if (isSpanish)
-            {
-                message = $"🚨 ¡NUEVA VERSIÓN DETECTADA!\n\n" +
-                         $"Se ha detectado una nueva versión durante el uso.\n" +
-                         $"Por seguridad, el inyector se bloqueará.\n\n" +
-                         $"📱 Versión actual: v{currentVersion}\n" +
-                         $"🔥 Versión nueva: v{latestVersion}\n\n" +
-                         $"La aplicación se cerrará automáticamente.\n" +
-                         $"¿Quieres ir al Discord para actualizar?";
-                title = "🔒 BLOQUEO AUTOMÁTICO - NUEVA VERSIÓN";
-            }
-            else
-            {
-                message = $"🚨 NEW VERSION DETECTED!\n\n" +
-                         $"A new version has been detected during use.\n" +
-                         $"For security, the injector will be locked.\n\n" +
-                         $"📱 Current version: v{currentVersion}\n" +
-                         $"🔥 New version: v{latestVersion}\n\n" +
-                         $"The application will close automatically.\n" +
-                         $"Do you want to go to Discord to update?";
-                title = "🔒 AUTOMATIC LOCK - NEW VERSION";
-            }
-
-            var result = MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                try
-                {
-                    VersionChecker.OpenDiscordUpdate();
-                }
-                catch
-                {
-                    // Ignorar error al abrir Discord
-                }
-            }
-
-            // 🔒 CERRAR APLICACIÓN AUTOMÁTICAMENTE
-            System.Diagnostics.Debug.WriteLine("🔒 CERRANDO APLICACIÓN POR NUEVA VERSIÓN DETECTADA EN TIEMPO REAL");
-            await Task.Delay(1000); // Pequeño delay para que se vea el mensaje
-            Application.Current.Shutdown();
-        }
-
-        /// <summary>
-        /// 🛡️ VALIDACIÓN CRÍTICA BLOQUEANTE DE VERSIÓN
-        /// Se ejecuta SÍNCRONAMENTE antes de cargar cualquier cosa
-        /// Retorna false si debe cerrarse la aplicación
-        /// </summary>
-        private bool ValidateVersionBlocking()
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine("🔍 INICIANDO VALIDACIÓN CRÍTICA DE VERSIÓN...");
-                
-                // Ejecutar verificación de forma SÍNCRONA
-                var task = VersionChecker.CheckForUpdatesAsync();
-                task.Wait(10000); // Esperar máximo 10 segundos
-                
-                if (!task.IsCompleted)
-                {
-                    // Timeout - permitir uso offline
-                    System.Diagnostics.Debug.WriteLine("⏰ TIMEOUT en verificación - permitiendo uso offline");
-                    return true;
-                }
-                
-                bool isOutdated = task.Result;
-                
-                if (isOutdated)
-                {
-                    // MOSTRAR DIÁLOGO BLOQUEANTE
-                    var currentVersion = VersionChecker.GetCurrentVersion();
-                    var latestVersion = VersionChecker.GetLatestVersion();
-                    
-                    System.Diagnostics.Debug.WriteLine($"🚫 VERSIÓN DESACTUALIZADA DETECTADA: {currentVersion} < {latestVersion}");
-                    
-                    var result = MessageBox.Show(
-                        $"🚫 ACCESO DENEGADO\n\n" +
-                        $"Tu versión está DESACTUALIZADA y no puede ser utilizada.\n\n" +
-                        $"📱 Versión actual: v{currentVersion}\n" +
-                        $"🔄 Versión requerida: v{latestVersion}\n\n" +
-                        $"Para continuar usando el inyector debes actualizar.\n\n" +
-                        $"¿Quieres ir al Discord para descargar la nueva versión?\n\n" +
-                        $"La aplicación se cerrará después de este mensaje.",
-                        "🔒 VERSIÓN DESACTUALIZADA - ACCESO BLOQUEADO",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Stop);
-
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        try
-                        {
-                            VersionChecker.OpenDiscordUpdate();
-                        }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Error abriendo Discord: {ex.Message}");
-                        }
-                    }
-                    
-                    System.Diagnostics.Debug.WriteLine("🔒 CERRANDO APLICACIÓN POR VERSIÓN DESACTUALIZADA");
-                    return false; // Cerrar aplicación
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("✅ VERSIÓN VALIDADA CORRECTAMENTE");
-                    return true; // Continuar normalmente
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"⚠️ ERROR en validación de versión: {ex.Message}");
-                // En caso de error, permitir uso offline
-                return true;
-            }
-        }
-
-        /// <summary>
-        /// VALIDACIÓN ASÍNCRONA SECUNDARIA (para updates durante ejecución)
-        /// </summary>
-        private async Task ValidateVersionOnStartup()
-        {
-            try
-            {
-                // Mostrar mensaje de verificación
-                if (VersionStatusText != null)
-                {
-                    VersionStatusText.Text = "🔍 VERIFICANDO VERSIÓN...";
-                    VersionStatusText.Foreground = System.Windows.Media.Brushes.Yellow;
-                }
-
-                // Verificar versión
-                bool isOutdated = await VersionChecker.CheckForUpdatesAsync();
-                
-                if (isOutdated)
-                {
-                    // BLOQUEO TOTAL DE LA APLICACIÓN
-                    await ShowVersionBlockDialog();
-                }
-                else
-                {
-                    // Versión correcta - continuar normalmente
-                    if (VersionStatusText != null)
-                    {
-                        VersionStatusText.Text = "✅ VERSIÓN VALIDADA";
-                        VersionStatusText.Foreground = System.Windows.Media.Brushes.LimeGreen;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Si hay error de conexión, permitir uso pero mostrar advertencia
-                if (VersionStatusText != null)
-                {
-                    VersionStatusText.Text = "⚠️ NO SE PUDO VERIFICAR VERSIÓN";
-                    VersionStatusText.Foreground = System.Windows.Media.Brushes.Orange;
-                }
-                System.Diagnostics.Debug.WriteLine($"Error en validación de versión: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Muestra diálogo de bloqueo y cierra la aplicación si está desactualizada
-        /// </summary>
-        private async Task ShowVersionBlockDialog()
-        {
-            var currentVersion = VersionChecker.GetCurrentVersion();
-            var latestVersion = VersionChecker.GetLatestVersion();
-            
-            var result = MessageBox.Show(
-                $"🚫 ACCESO DENEGADO\n\n" +
-                $"Tu versión está DESACTUALIZADA y no puede ser utilizada.\n\n" +
-                $"📱 Versión actual: v{currentVersion}\n" +
-                $"🔄 Versión requerida: v{latestVersion}\n\n" +
-                $"Para continuar usando el inyector debes actualizar.\n\n" +
-                $"¿Quieres ir al Discord para descargar la nueva versión?",
-                "🔒 VERSIÓN DESACTUALIZADA - ACCESO BLOQUEADO",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Stop);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                try
-                {
-                    VersionChecker.OpenDiscordUpdate();
-                }
-                catch
-                {
-                    // Ignorar error al abrir Discord
-                }
-            }
-
-            // CERRAR APLICACIÓN FORZOSAMENTE
-            await Task.Delay(500); // Pequeño delay para que se vea el mensaje
-            Application.Current.Shutdown();
-        }
-
         private void UpdateGameStatus()
         {
             bool isRunning = InjectionManager.IsGameRunning();
-            bool isOutdated = VersionChecker.IsOutdated();
+          
             
             if (isRunning)
             {
@@ -423,8 +233,7 @@ namespace GTAVInjector
                 
                 // Solo habilitar botones si no está desactualizado
                 LaunchButton.IsEnabled = false;
-                InjectButton.IsEnabled = !isOutdated;
-                KillButton.IsEnabled = !isOutdated;
+
                 
                 // Si el juego no estaba corriendo antes y ahora sí, resetear auto-inject
                 if (!_gameWasRunning)
@@ -437,13 +246,10 @@ namespace GTAVInjector
             }
             else
             {
+                KillButton.IsEnabled = false;
+
                 GameStatusText.Text = LocalizationManager.GetString("GameNotRunning");
                 GameStatusText.Foreground = System.Windows.Media.Brushes.Red;
-                
-                // Solo habilitar botones si no está desactualizado
-                LaunchButton.IsEnabled = !isOutdated;
-                InjectButton.IsEnabled = false;
-                KillButton.IsEnabled = false;
                 
                 // Si el juego estaba ejecutándose antes y ahora no, resetear el estado
                 if (_gameWasRunning)
@@ -574,7 +380,7 @@ namespace GTAVInjector
                 if (VersionStatusTitle != null) VersionStatusTitle.Text = LocalizationManager.GetString("VersionStatus");
                 if (UpdateButton != null) UpdateButton.Content = LocalizationManager.GetString("UpdateAvailable");
                 if (ChangelogButton != null) ChangelogButton.Content = LocalizationManager.GetString("ViewChangelog");
-                if (CheckUpdatesButton != null) CheckUpdatesButton.Content = LocalizationManager.GetString("CheckUpdates");
+               
                 
                 // Actualizar textos de requisitos
                 if (VcRequirementText != null) VcRequirementText.Text = LocalizationManager.GetString("VcRequirement");
@@ -962,23 +768,7 @@ namespace GTAVInjector
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                var result = MessageBox.Show(
-                    "Tu versión está desactualizada. ¿Quieres ir al Discord de TessioScript para obtener la actualización?",
-                    "Actualización Disponible",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-                
-                if (result == MessageBoxResult.Yes)
-                {
                     VersionChecker.OpenDiscordUpdate();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al abrir Discord: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
 
         private void Changelog_Click(object sender, RoutedEventArgs e)
@@ -994,133 +784,6 @@ namespace GTAVInjector
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al abrir changelog: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-
-        // ✨ NUEVO MÉTODO PARA VERIFICAR ACTUALIZACIONES MANUALMENTE ✨
-        private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                // Deshabilitar el botón mientras se verifica
-                if (CheckUpdatesButton != null)
-                {
-                    CheckUpdatesButton.IsEnabled = false;
-                    var checkingText = LocalizationManager.CurrentLanguage.ToLower() == "es" ? "🔄 Verificando..." : "🔄 Checking...";
-                    CheckUpdatesButton.Content = checkingText;
-                }
-
-                // Actualizar estado de la interfaz
-                var checkingStatusText = LocalizationManager.CurrentLanguage.ToLower() == "es" ? 
-                    "🌐 Verificando versión desde internet..." : 
-                    "🌐 Checking version from internet...";
-                VersionStatusText.Text = checkingStatusText;
-                VersionStatusText.Foreground = System.Windows.Media.Brushes.Yellow;
-
-                // Forzar verificación (ignorar cache)
-                bool isOutdated = await VersionChecker.ForceCheckForUpdatesAsync();
-                
-                // Obtener información detallada
-                var versionInfo = VersionChecker.GetVersionInfo();
-                
-                // Actualizar interfaz con resultado
-                UpdateVersionStatus(isOutdated);
-
-                // Mostrar mensaje informativo localizado
-                string message;
-                string title;
-                MessageBoxImage icon;
-
-                var isSpanish = LocalizationManager.CurrentLanguage.ToLower() == "es";
-
-                if (isOutdated)
-                {
-                    if (isSpanish)
-                    {
-                        message = $"🆕 ¡Nueva versión disponible!\n\n" +
-                                 $"📱 Versión actual: v{versionInfo.CurrentVersion}\n" +
-                                 $"🔥 Versión nueva: v{versionInfo.LatestVersion}\n\n" +
-                                 $"Se recomienda actualizar para obtener las últimas mejoras y correcciones.";
-                        title = "Actualización Disponible";
-                    }
-                    else
-                    {
-                        message = $"🆕 New version available!\n\n" +
-                                 $"📱 Current version: v{versionInfo.CurrentVersion}\n" +
-                                 $"🔥 Latest version: v{versionInfo.LatestVersion}\n\n" +
-                                 $"It's recommended to update to get the latest improvements and fixes.";
-                        title = "Update Available";
-                    }
-                    icon = MessageBoxImage.Information;
-                }
-                else if (!string.IsNullOrEmpty(versionInfo.LatestVersion))
-                {
-                    if (isSpanish)
-                    {
-                        message = $"✅ ¡Estás usando la versión más reciente!\n\n" +
-                                 $"📱 Versión actual: v{versionInfo.CurrentVersion}\n" +
-                                 $"🌐 Última versión: v{versionInfo.LatestVersion}\n\n" +
-                                 $"No se requiere actualización.";
-                        title = "Versión Actualizada";
-                    }
-                    else
-                    {
-                        message = $"✅ You're using the latest version!\n\n" +
-                                 $"📱 Current version: v{versionInfo.CurrentVersion}\n" +
-                                 $"🌐 Latest version: v{versionInfo.LatestVersion}\n\n" +
-                                 $"No update required.";
-                        title = "Up to Date";
-                    }
-                    icon = MessageBoxImage.Information;
-                }
-                else
-                {
-                    if (isSpanish)
-                    {
-                        message = "⚠️ No se pudo verificar la versión.\n\n" +
-                                 $"📱 Versión actual: v{versionInfo.CurrentVersion}\n\n" +
-                                 $"Verifica tu conexión a internet e intenta nuevamente.";
-                        title = "Error de Verificación";
-                    }
-                    else
-                    {
-                        message = "⚠️ Could not verify version.\n\n" +
-                                 $"📱 Current version: v{versionInfo.CurrentVersion}\n\n" +
-                                 $"Check your internet connection and try again.";
-                        title = "Verification Error";
-                    }
-                    icon = MessageBoxImage.Warning;
-                }
-
-                MessageBox.Show(message, title, MessageBoxButton.OK, icon);
-            }
-            catch (Exception ex)
-            {
-                // Error inesperado
-                var errorText = LocalizationManager.CurrentLanguage.ToLower() == "es" ? 
-                    "❌ Error al verificar versión" : 
-                    "❌ Error checking version";
-                VersionStatusText.Text = errorText;
-                VersionStatusText.Foreground = System.Windows.Media.Brushes.Red;
-
-                var isSpanish = LocalizationManager.CurrentLanguage.ToLower() == "es";
-                var errorMessage = isSpanish ? 
-                    $"❌ Error inesperado al verificar actualizaciones:\n\n{ex.Message}\n\nIntenta nuevamente más tarde." :
-                    $"❌ Unexpected error checking for updates:\n\n{ex.Message}\n\nPlease try again later.";
-                var errorTitle = isSpanish ? "Error de Verificación" : "Verification Error";
-
-                MessageBox.Show(errorMessage, errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
-
-                System.Diagnostics.Debug.WriteLine($"Error en CheckUpdates_Click: {ex}");
-            }
-            finally
-            {
-                // Rehabilitar el botón
-                if (CheckUpdatesButton != null)
-                {
-                    CheckUpdatesButton.IsEnabled = true;
-                    CheckUpdatesButton.Content = LocalizationManager.GetString("CheckUpdates");
-                }
             }
         }
 
@@ -1143,7 +806,8 @@ namespace GTAVInjector
             {
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
-                    FileName = "https://discord.gg/NH6pArJB",
+                   
+                    FileName = TESSIO_DISCORD_URL,
                     UseShellExecute = true
                 });
             }
