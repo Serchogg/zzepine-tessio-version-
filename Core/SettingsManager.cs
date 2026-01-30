@@ -16,8 +16,8 @@ namespace GTAVInjector.Core
         
         private static readonly string SettingsPath = Path.Combine(SettingsDirectory, "config.conf");
 
-        public static AppSettings Settings { get; private set; } = null!;
-        
+        public static AppSettings Settings { get; private set; } = new AppSettings();
+
         // Copia de los settings cargados para detectar cambios
         private static AppSettings? _loadedSettings = null;
 
@@ -130,6 +130,11 @@ namespace GTAVInjector.Core
                     if (bool.TryParse(value, out var autoInject))
                         Settings.AutoInject = autoInject;
                     break;
+                // 🆕 CARGAR LAUNCH DELAY
+                case "LaunchDelay":
+                    if (int.TryParse(value, out var launchDelay))
+                        Settings.LaunchDelay = launchDelay;
+                    break;
             }
         }
         
@@ -206,7 +211,7 @@ namespace GTAVInjector.Core
                     return;
                 }
                 
-                System.Diagnostics.Debug.WriteLine($"[SAVE DEBUG] GUARDANDO - LauncherType: {Settings.LauncherType}, Language: {Settings.Language}");
+                System.Diagnostics.Debug.WriteLine($"[SAVE DEBUG] GUARDANDO - LauncherType: {Settings.LauncherType}, Language: {Settings.Language}, LaunchDelay: {Settings.LaunchDelay}");
                 
                 // Crear directorio si no existe
                 if (!Directory.Exists(SettingsDirectory))
@@ -244,6 +249,7 @@ namespace GTAVInjector.Core
                 "[Interface]",
                 $"Language={Settings.Language}",
                 $"AutoInject={Settings.AutoInject}",
+                $"LaunchDelay={Settings.LaunchDelay}",  // 🆕 GUARDAR LAUNCH DELAY
                 "",
                 "[DLLPaths]"
             };
@@ -271,6 +277,7 @@ namespace GTAVInjector.Core
                 LauncherType = settings.LauncherType,
                 AutoInject = settings.AutoInject,
                 Language = settings.Language,
+                LaunchDelay = settings.LaunchDelay,  // 🆕 CLONAR LAUNCH DELAY
                 DllEntries = settings.DllEntries.Select(dll => new DllEntry
                 {
                     Path = dll.Path,
@@ -308,6 +315,12 @@ namespace GTAVInjector.Core
             if (Settings.Language != _loadedSettings.Language)
             {
                 System.Diagnostics.Debug.WriteLine($"[CHANGE DEBUG] Language: {_loadedSettings.Language} -> {Settings.Language}");
+                return true;
+            }
+            // 🆕 COMPARAR LAUNCH DELAY
+            if (Settings.LaunchDelay != _loadedSettings.LaunchDelay)
+            {
+                System.Diagnostics.Debug.WriteLine($"[CHANGE DEBUG] LaunchDelay: {_loadedSettings.LaunchDelay} -> {Settings.LaunchDelay}");
                 return true;
             }
             

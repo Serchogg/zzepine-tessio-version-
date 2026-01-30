@@ -5,9 +5,9 @@ namespace GTAVInjector.Core
     public static class LocalizationManager
     {
         private static string _currentLanguage = "es";
-        
+
         public static string CurrentLanguage => _currentLanguage;
-        
+
         private static readonly Dictionary<string, Dictionary<string, string>> Translations = new()
         {
             ["en"] = new Dictionary<string, string>
@@ -49,7 +49,16 @@ namespace GTAVInjector.Core
                 ["GtaRequirement"] = "• GTA V installed",
                 ["AdminRequirement"] = "• Administrator rights",
                 ["Language"] = "Language",
-                ["GameKilled"] = "Game terminated"
+                ["LaunchDelay"] = "Launch Delay",
+                ["LaunchDelayDescription"] = "Delay before injecting DLLs (seconds)",
+                ["LaunchDelayInfo"] = "Recommended: 5-10 seconds for stable injection",
+                ["OpenAppData"] = "📁 AppData",
+                ["BattlEyeDetected"] = "⚠️ BattlEye Anti-Cheat Detected",
+                ["BattlEyeWarning"] = "BattlEye is active. Injection has been disabled for your safety.\n\nPlease launch the game without BattlEye to use this injector.",
+                ["FSLDetected"] = "ℹ️ FSL Detected (WINMM.dll)",
+                ["FSLInfo"] = "FiveM Server Link detected. Using extended delay (15s) for stable injection.",
+                ["InjectionBlocked"] = "Injection Blocked",
+                ["CannotInjectBattlEye"] = "Cannot inject while BattlEye is active"
             },
             ["es"] = new Dictionary<string, string>
             {
@@ -90,7 +99,16 @@ namespace GTAVInjector.Core
                 ["GtaRequirement"] = "• GTA V instalado",
                 ["AdminRequirement"] = "• Permisos de administrador",
                 ["Language"] = "Idioma",
-                ["GameKilled"] = "Juego terminado"
+                ["LaunchDelay"] = "Retraso de Inicio",
+                ["LaunchDelayDescription"] = "Retraso antes de inyectar DLLs (segundos)",
+                ["LaunchDelayInfo"] = "Recomendado: 5-10 segundos para inyección estable",
+                ["OpenAppData"] = "📁 AppData",
+                ["BattlEyeDetected"] = "⚠️ BattlEye Anti-Cheat Detectado",
+                ["BattlEyeWarning"] = "BattlEye está activo. La inyección ha sido deshabilitada por tu seguridad.\n\nPor favor inicia el juego sin BattlEye para usar este inyector.",
+                ["FSLDetected"] = "ℹ️ FSL Detectado (WINMM.dll)",
+                ["FSLInfo"] = "FiveM Server Link detectado. Usando delay extendido (15s) para inyección estable.",
+                ["InjectionBlocked"] = "Inyección Bloqueada",
+                ["CannotInjectBattlEye"] = "No se puede inyectar mientras BattlEye está activo"
             }
         };
 
