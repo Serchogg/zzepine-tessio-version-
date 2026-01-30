@@ -12,7 +12,7 @@
         AllowsTransparency="True"
         WindowStyle="None"
         ResizeMode="NoResize">
-    
+
     <Window.Resources>
         <!-- Animaciones dinámicas del fondo GTA V -->
         <Storyboard x:Key="BackgroundAnimation" RepeatBehavior="Forever">
@@ -31,7 +31,7 @@
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
-            
+
             <!-- Zoom sutil -->
             <DoubleAnimation Storyboard.TargetName="BackgroundScale"
                            Storyboard.TargetProperty="ScaleX"
@@ -47,7 +47,7 @@
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
-            
+
             <!-- Animación de partículas layer 1 -->
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer1"
                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
@@ -63,7 +63,7 @@
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
-            
+
             <!-- Animación de partículas layer 2 -->
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer2"
                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
@@ -79,7 +79,7 @@
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
-            
+
             <!-- Animación de partículas layer 3 -->
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer3"
                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
@@ -95,7 +95,7 @@
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
-            
+
             <!-- Animación de partículas layer 4 -->
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer4"
                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
@@ -111,7 +111,7 @@
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
-            
+
             <!-- Animación de partículas layer 5 -->
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer5"
                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
@@ -127,7 +127,7 @@
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
-            
+
             <!-- Animación de partículas layer 6 -->
             <DoubleAnimation Storyboard.TargetName="ParallaxLayer6"
                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
@@ -145,7 +145,7 @@
             </DoubleAnimation>
         </Storyboard>
     </Window.Resources>
-    
+
     <Window.Triggers>
         <EventTrigger RoutedEvent="Loaded">
             <BeginStoryboard Storyboard="{StaticResource BackgroundAnimation}"/>
@@ -173,11 +173,11 @@
                         </TransformGroup>
                     </Image.RenderTransform>
                 </Image>
-                
+
                 <!-- Capa de overlay para oscurecer ligeramente -->
                 <Rectangle Canvas.Left="0" Canvas.Top="0" Width="1200" Height="800" 
                           Fill="Black" Opacity="0.4"/>
-                
+
                 <!-- Capa de parallax 1 - Elementos dinámicos -->
                 <Canvas x:Name="ParallaxLayer1" Width="1400" Height="700" Opacity="0.6">
                     <Canvas.RenderTransform>
@@ -237,7 +237,7 @@
                         </Ellipse.Effect>
                     </Ellipse>
                 </Canvas>
-                
+
                 <!-- Capa de parallax 2 - Más partículas -->
                 <Canvas x:Name="ParallaxLayer2" Width="1400" Height="700" Opacity="0.5">
                     <Canvas.RenderTransform>
@@ -296,7 +296,7 @@
                         </Ellipse.Effect>
                     </Ellipse>
                 </Canvas>
-                
+
                 <!-- Capa de parallax 3 - 10 partículas -->
                 <Canvas x:Name="ParallaxLayer3" Width="1400" Height="700" Opacity="0.4">
                     <Canvas.RenderTransform>
@@ -353,7 +353,7 @@
                         </Ellipse.Effect>
                     </Ellipse>
                 </Canvas>
-                
+
                 <!-- Capa de parallax 4 - 10 partículas -->
                 <Canvas x:Name="ParallaxLayer4" Width="1400" Height="700" Opacity="0.3">
                     <Canvas.RenderTransform>
@@ -410,7 +410,7 @@
                         </Ellipse.Effect>
                     </Ellipse>
                 </Canvas>
-                
+
                 <!-- Capa de parallax 5 - 10 partículas -->
                 <Canvas x:Name="ParallaxLayer5" Width="1400" Height="700" Opacity="0.2">
                     <Canvas.RenderTransform>
@@ -467,7 +467,7 @@
                         </Ellipse.Effect>
                     </Ellipse>
                 </Canvas>
-                
+
                 <!-- Capa de parallax 6 - 10 partículas -->
                 <Canvas x:Name="ParallaxLayer6" Width="1400" Height="700" Opacity="0.15">
                     <Canvas.RenderTransform>
@@ -525,7 +525,7 @@
                     </Ellipse>
                 </Canvas>
             </Canvas>
-            
+
             <!-- Contenido principal -->
             <Grid Margin="2">
                 <Grid.RowDefinitions>
@@ -533,61 +533,61 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
-                
+
                 <!-- Barra de título personalizada -->
                 <Border Grid.Row="0" Background="#1A0128" CornerRadius="13,13,0,0" Margin="0">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <!-- Logo y título -->
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="15,0">
-                        <Image x:Name="LogoImage" Width="40" Height="40" Margin="0,0,10,0" 
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Logo y título -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="15,0">
+                            <Image x:Name="LogoImage" Width="40" Height="40" Margin="0,0,10,0" 
                                Source="pack://application:,,,/Resources/logo tessio.png" VerticalAlignment="Center"/>
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="TessioScript Inyector" FontSize="18" FontWeight="Bold" Foreground="#FF9EFF"/>
-                            <TextBlock x:Name="VersionText" Text="v2.0.0" FontSize="10" Foreground="#D3B4FF"/>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="TessioScript Inyector" FontSize="18" FontWeight="Bold" Foreground="#FF9EFF"/>
+                                <TextBlock x:Name="VersionText" Text="v2.0.0" FontSize="10" Foreground="#D3B4FF"/>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                    
-                    <!-- Selector de idioma -->
-                    <Border Grid.Column="1" Margin="0,0,20,0" HorizontalAlignment="Right"
+
+                        <!-- Selector de idioma -->
+                        <Border Grid.Column="1" Margin="0,0,20,0" HorizontalAlignment="Right"
                             Background="#2A0B3A" CornerRadius="20" Padding="12,6">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="16"
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="16"
                                        Foreground="#FF9EFF" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <StackPanel>
-                                <TextBlock x:Name="LanguageLabel" Text="Idioma" FontSize="11" Foreground="#D3B4FF"/>
-                                <ComboBox x:Name="LanguageSelector" Width="160" Height="30"
+                                <StackPanel>
+                                    <TextBlock x:Name="LanguageLabel" Text="Idioma" FontSize="11" Foreground="#D3B4FF"/>
+                                    <ComboBox x:Name="LanguageSelector" Width="160" Height="30"
                                           Background="#2A0B3A" Foreground="#FFFFFF" BorderBrush="#A946FF"
                                           Padding="4,0" FontWeight="SemiBold" BorderThickness="1"
                                           FocusVisualStyle="{x:Null}"
                                           SelectionChanged="LanguageSelector_SelectionChanged">
-                                    <ComboBox.Style>
-                                        <Style TargetType="ComboBox">
-                                            <Setter Property="Background" Value="#2A0B3A"/>
-                                            <Setter Property="BorderBrush" Value="#A946FF"/>
-                                            <Setter Property="Foreground" Value="#FFFFFF"/>
-                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ComboBox">
-                                                        <Border x:Name="MainBorder"
+                                        <ComboBox.Style>
+                                            <Style TargetType="ComboBox">
+                                                <Setter Property="Background" Value="#2A0B3A"/>
+                                                <Setter Property="BorderBrush" Value="#A946FF"/>
+                                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ComboBox">
+                                                            <Border x:Name="MainBorder"
                                                                 Background="{TemplateBinding Background}"
                                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                                 BorderThickness="{TemplateBinding BorderThickness}"
                                                                 CornerRadius="4"
                                                                 MouseLeftButtonDown="ComboBox_MouseDown">
-                                                            <Grid>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="*"/>
-                                                                    <ColumnDefinition Width="20"/>
-                                                                </Grid.ColumnDefinitions>
-                                                                
-                                                                <ContentPresenter Grid.Column="0"
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="20"/>
+                                                                    </Grid.ColumnDefinitions>
+
+                                                                    <ContentPresenter Grid.Column="0"
                                                                                 x:Name="ContentSite"
                                                                                 Content="{TemplateBinding SelectionBoxItem}"
                                                                                 ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
@@ -596,8 +596,8 @@
                                                                                 VerticalAlignment="Center"
                                                                                 HorizontalAlignment="Left"
                                                                                 TextElement.Foreground="{TemplateBinding Foreground}"/>
-                                                                
-                                                                <ToggleButton Grid.Column="1"
+
+                                                                    <ToggleButton Grid.Column="1"
                                                                             x:Name="ToggleButton"
                                                                             Background="Transparent"
                                                                             BorderBrush="Transparent"
@@ -605,149 +605,369 @@
                                                                             Focusable="False"
                                                                             IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                                                             ClickMode="Press">
-                                                                    <ToggleButton.Style>
-                                                                        <Style TargetType="ToggleButton">
-                                                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                                                                            <Setter Property="Template">
-                                                                                <Setter.Value>
-                                                                                    <ControlTemplate TargetType="ToggleButton">
-                                                                                        <Border x:Name="ToggleBorder" Background="Transparent">
-                                                                                            <Path Fill="#FFFFFF"
+                                                                        <ToggleButton.Style>
+                                                                            <Style TargetType="ToggleButton">
+                                                                                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                                                <Setter Property="Template">
+                                                                                    <Setter.Value>
+                                                                                        <ControlTemplate TargetType="ToggleButton">
+                                                                                            <Border x:Name="ToggleBorder" Background="Transparent">
+                                                                                                <Path Fill="#FFFFFF"
                                                                                                   Data="M0,0 L4,4 L8,0 Z"
                                                                                                   HorizontalAlignment="Center"
                                                                                                   VerticalAlignment="Center"/>
-                                                                                        </Border>
-                                                                                        <ControlTemplate.Triggers>
-                                                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                                                <Setter TargetName="ToggleBorder" Property="Background" Value="Transparent"/>
-                                                                                            </Trigger>
-                                                                                        </ControlTemplate.Triggers>
-                                                                                    </ControlTemplate>
-                                                                                </Setter.Value>
-                                                                            </Setter>
-                                                                        </Style>
-                                                                    </ToggleButton.Style>
-                                                                </ToggleButton>
-                                                                
-                                                                <Popup x:Name="Popup"
+                                                                                            </Border>
+                                                                                            <ControlTemplate.Triggers>
+                                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                                    <Setter TargetName="ToggleBorder" Property="Background" Value="Transparent"/>
+                                                                                                </Trigger>
+                                                                                            </ControlTemplate.Triggers>
+                                                                                        </ControlTemplate>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                            </Style>
+                                                                        </ToggleButton.Style>
+                                                                    </ToggleButton>
+
+                                                                    <Popup x:Name="Popup"
                                                                      Placement="Bottom"
                                                                      IsOpen="{TemplateBinding IsDropDownOpen}"
                                                                      AllowsTransparency="True"
                                                                      Focusable="False"
                                                                      PopupAnimation="Slide">
-                                                                    <Grid MinWidth="{TemplateBinding ActualWidth}">
-                                                                        <Border Background="#3B0F4D"
+                                                                        <Grid MinWidth="{TemplateBinding ActualWidth}">
+                                                                            <Border Background="#3B0F4D"
                                                                               BorderBrush="#FF9EFF"
                                                                               BorderThickness="1"
                                                                               CornerRadius="4"
                                                                               Padding="0,4">
-                                                                            <ScrollViewer x:Name="DropDownScrollViewer">
-                                                                                <StackPanel IsItemsHost="True"/>
-                                                                            </ScrollViewer>
-                                                                        </Border>
-                                                                    </Grid>
-                                                                </Popup>
-                                                            </Grid>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="MainBorder" Property="Background" Value="#3B0F4D"/>
-                                                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FF9EFF"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsFocused" Value="True">
-                                                                <Setter TargetName="MainBorder" Property="Background" Value="#3B0F4D"/>
-                                                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FF9EFF"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsDropDownOpen" Value="True">
-                                                                <Setter TargetName="MainBorder" Property="Background" Value="#3B0F4D"/>
-                                                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FF9EFF"/>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ComboBox.Style>
-                                    <ComboBox.ItemContainerStyle>
-                                        <Style TargetType="ComboBoxItem">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="Foreground" Value="#FFFFFF"/>
-                                            <Setter Property="Padding" Value="8,4"/>
-                                            <Setter Property="BorderThickness" Value="0"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ComboBoxItem">
-                                                        <Border x:Name="ItemBorder"
+                                                                                <ScrollViewer x:Name="DropDownScrollViewer">
+                                                                                    <StackPanel IsItemsHost="True"/>
+                                                                                </ScrollViewer>
+                                                                            </Border>
+                                                                        </Grid>
+                                                                    </Popup>
+                                                                </Grid>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="MainBorder" Property="Background" Value="#3B0F4D"/>
+                                                                    <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FF9EFF"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsFocused" Value="True">
+                                                                    <Setter TargetName="MainBorder" Property="Background" Value="#3B0F4D"/>
+                                                                    <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FF9EFF"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsDropDownOpen" Value="True">
+                                                                    <Setter TargetName="MainBorder" Property="Background" Value="#3B0F4D"/>
+                                                                    <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FF9EFF"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ComboBox.Style>
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                <Setter Property="Padding" Value="8,4"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ComboBoxItem">
+                                                            <Border x:Name="ItemBorder"
                                                                 Background="Transparent"
                                                                 BorderThickness="0"
                                                                 Padding="{TemplateBinding Padding}">
-                                                            <ContentPresenter HorizontalAlignment="Left"
+                                                                <ContentPresenter HorizontalAlignment="Left"
                                                                             VerticalAlignment="Center"/>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsHighlighted" Value="True">
-                                                                <Setter TargetName="ItemBorder" Property="Background" Value="#A946FF"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsSelected" Value="True">
-                                                                <Setter TargetName="ItemBorder" Property="Background" Value="#4D1A5E"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="ItemBorder" Property="Background" Value="#A946FF"/>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ComboBox.ItemContainerStyle>
-                                    <ComboBoxItem Content="🇺🇸 English" Tag="en"/>
-                                    <ComboBoxItem Content="🇪🇸 Español" Tag="es"/>
-                                </ComboBox>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsHighlighted" Value="True">
+                                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#A946FF"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsSelected" Value="True">
+                                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#4D1A5E"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#A946FF"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+                                        <ComboBoxItem Content="🇺🇸 English" Tag="en"/>
+                                        <ComboBoxItem Content="🇪🇸 Español" Tag="es"/>
+                                    </ComboBox>
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
-                    </Border>
-                    
-                    <!-- Botones de ventana -->
-                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <Button Content="─" Style="{StaticResource WindowButton}" Click="Minimize_Click"/>
-                        <Button Content="✕" Style="{StaticResource CloseButton}" Click="Close_Click"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
+                        </Border>
 
-    <!-- Contenido principal -->
+                        <!-- Botones de ventana -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                            <Button Content="─" Style="{StaticResource WindowButton}" Click="Minimize_Click"/>
+                            <Button Content="✕" Style="{StaticResource CloseButton}" Click="Close_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Contenido principal -->
                 <Grid Grid.Row="1" Margin="0" Background="Transparent">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    
+
                     <!-- Panel izquierdo - Lista de DLLs -->
                     <Border Grid.Column="0" Background="#A5180429" CornerRadius="10" Padding="18">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
+                                <!-- Título + Botón -->
                                 <RowDefinition Height="Auto"/>
+                                <!-- CheckBox -->
+                                <RowDefinition Height="Auto"/>
+                                <!-- Delay Control -->
                                 <RowDefinition Height="*"/>
+                                <!-- Lista DLLs -->
                                 <RowDefinition Height="Auto"/>
+                                <!-- Botones inferiores -->
                             </Grid.RowDefinitions>
-                            
+
                             <!-- Título y botones -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                                 <TextBlock x:Name="DllListTitle" Text="DLL List" FontSize="16" FontWeight="Bold" 
                                           Foreground="#FFD9FF" VerticalAlignment="Center"/>
                                 <Button x:Name="AddDllButton" Content="+ Add DLL" Margin="15,0,0,0" 
                                        Style="{StaticResource PrimaryButton}" Click="AddDll_Click"/>
+                                <Button x:Name="AppDataButton" Content="📁 AppData" Margin="10,0,0,0"
+                                       Click="OpenAppData_Click"
+                                       ToolTip="Open AppData\Roaming folder"
+                                       Width="120"
+                                       Height="35"
+                                       Background="#2A0B3A"
+                                       Foreground="White"
+                                       BorderBrush="#7B2D9E"
+                                       BorderThickness="1"
+                                       FontSize="12"
+                                       Cursor="Hand">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="border"
+                                                                Background="{TemplateBinding Background}"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                CornerRadius="5">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <!-- Hover Effect -->
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Trigger.EnterActions>
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetName="border"
+                                                                                          Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                                          To="#3B0F4D"
+                                                                                          Duration="0:0:0.2"/>
+                                                                            <ColorAnimation Storyboard.TargetName="border"
+                                                                                          Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                                                          To="#A946FF"
+                                                                                          Duration="0:0:0.2"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </Trigger.EnterActions>
+                                                                <Trigger.ExitActions>
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <ColorAnimation Storyboard.TargetName="border"
+                                                                                          Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                                          To="#2A0B3A"
+                                                                                          Duration="0:0:0.2"/>
+                                                                            <ColorAnimation Storyboard.TargetName="border"
+                                                                                          Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                                                          To="#7B2D9E"
+                                                                                          Duration="0:0:0.2"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </Trigger.ExitActions>
+                                                            </Trigger>
+
+                                                            <!-- Click Effect -->
+                                                            <Trigger Property="IsPressed" Value="True">
+                                                                <Trigger.EnterActions>
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <!-- Cambio a rosa brillante -->
+                                                                            <ColorAnimation Storyboard.TargetName="border"
+                                                                                          Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                                          To="#FF1493"
+                                                                                          Duration="0:0:0.1"/>
+                                                                            <ColorAnimation Storyboard.TargetName="border"
+                                                                                          Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                                                          To="#FF69B4"
+                                                                                          Duration="0:0:0.1"/>
+                                                                            <!-- Pulso de escala -->
+                                                                            <DoubleAnimation Storyboard.TargetName="border"
+                                                                                           Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                                                           To="0.95"
+                                                                                           Duration="0:0:0.1"/>
+                                                                            <DoubleAnimation Storyboard.TargetName="border"
+                                                                                           Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                                                           To="0.95"
+                                                                                           Duration="0:0:0.1"/>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </Trigger.EnterActions>
+                                                                <Trigger.ExitActions>
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <!-- Volver a morado con bounce -->
+                                                                            <ColorAnimation Storyboard.TargetName="border"
+                                                                                          Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                                          To="#4D1361"
+                                                                                          Duration="0:0:0.3">
+                                                                                <ColorAnimation.EasingFunction>
+                                                                                    <BounceEase Bounces="2" EasingMode="EaseOut" Bounciness="3"/>
+                                                                                </ColorAnimation.EasingFunction>
+                                                                            </ColorAnimation>
+                                                                            <ColorAnimation Storyboard.TargetName="border"
+                                                                                          Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                                                          To="#A946FF"
+                                                                                          Duration="0:0:0.3"/>
+                                                                            <!-- Restaurar escala con bounce -->
+                                                                            <DoubleAnimation Storyboard.TargetName="border"
+                                                                                           Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                                                           To="1.0"
+                                                                                           Duration="0:0:0.3">
+                                                                                <DoubleAnimation.EasingFunction>
+                                                                                    <BounceEase Bounces="2" EasingMode="EaseOut" Bounciness="3"/>
+                                                                                </DoubleAnimation.EasingFunction>
+                                                                            </DoubleAnimation>
+                                                                            <DoubleAnimation Storyboard.TargetName="border"
+                                                                                           Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                                                           To="1.0"
+                                                                                           Duration="0:0:0.3">
+                                                                                <DoubleAnimation.EasingFunction>
+                                                                                    <BounceEase Bounces="2" EasingMode="EaseOut" Bounciness="3"/>
+                                                                                </DoubleAnimation.EasingFunction>
+                                                                            </DoubleAnimation>
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </Trigger.ExitActions>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                        <ControlTemplate.Resources>
+                                                            <!-- Necesario para las animaciones de escala -->
+                                                        </ControlTemplate.Resources>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Resources>
+                                                <!-- Transform para las animaciones de escala -->
+                                            </Style.Resources>
+                                        </Style>
+                                    </Button.Style>
+                                    <!-- RenderTransform para permitir animaciones de escala -->
+                                    <Button.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    </Button.RenderTransform>
+                                    <Button.RenderTransformOrigin>
+                                        <Point X="0.5" Y="0.5"/>
+                                    </Button.RenderTransformOrigin>
+                                </Button>
                             </StackPanel>
-                            
+
                             <!-- Auto-inyector -->
                             <CheckBox x:Name="AutoInjectCheckbox" Grid.Row="1" Margin="0,0,0,10"
                                      Content="Auto-Inject on game start" Foreground="#FFFFFF"
                                      Checked="AutoInject_Changed" Unchecked="AutoInject_Changed"/>
 
+                            <!-- 🆕 Launch Delay Configuration -->
+                            <Border Grid.Row="2" Background="#15011E" CornerRadius="8" Padding="12" Margin="0,10,0,10">
+                                <StackPanel>
+                                    <TextBlock x:Name="LaunchDelayTitle" Text="Launch Delay" 
+                                               FontWeight="Bold" Foreground="#FFD9FF" Margin="0,0,0,5"/>
+                                    <TextBlock x:Name="LaunchDelayDescription" 
+                                               Text="Delay before injecting DLLs (seconds)" 
+                                               Foreground="#D3B4FF" FontSize="11" Margin="0,0,0,8"
+                                               TextWrapping="Wrap"/>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="80"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Slider para delay -->
+                                        <Slider x:Name="LaunchDelaySlider" 
+                                                Grid.Column="0"
+                                                Minimum="0" Maximum="60" 
+                                                Value="5"
+                                                TickFrequency="5"
+                                                IsSnapToTickEnabled="False"
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,10,0"
+                                                ValueChanged="LaunchDelay_ValueChanged">
+                                            <Slider.Style>
+                                                <Style TargetType="Slider">
+                                                    <Setter Property="Foreground" Value="#A946FF"/>
+                                                    <Setter Property="Background" Value="#2A0B3A"/>
+                                                </Style>
+                                            </Slider.Style>
+                                        </Slider>
+
+                                        <!-- TextBox para valor numérico -->
+                                        <TextBox x:Name="LaunchDelayTextBox" 
+                                                 Grid.Column="1"
+                                                 Text="5"
+                                                 FontSize="14"
+                                                 FontWeight="Bold"
+                                                 TextAlignment="Center"
+                                                 VerticalAlignment="Center"
+                                                 Background="#2A0B3A"
+                                                 Foreground="#FFFFFF"
+                                                 BorderBrush="#A946FF"
+                                                 BorderThickness="1"
+                                                 Padding="5"
+                                                 Height="30"
+                                                 PreviewTextInput="LaunchDelayTextBox_PreviewTextInput"
+                                                 TextChanged="LaunchDelayTextBox_TextChanged">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="BorderBrush" Value="#FF9EFF"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsFocused" Value="True">
+                                                            <Setter Property="BorderBrush" Value="#FF9EFF"/>
+                                                            <Setter Property="Background" Value="#3B0F4D"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                    </Grid>
+
+                                    <!-- Texto informativo -->
+                                    <TextBlock x:Name="LaunchDelayInfo" 
+                                               Text="Recommended: 5-10 seconds for stable injection" 
+                                               Foreground="#D3B4FF" FontSize="10" 
+                                               Margin="0,5,0,0" FontStyle="Italic"/>
+                                </StackPanel>
+                            </Border>
+
+
                             <!-- Lista de DLLs con ScrollViewer -->
-                            <ScrollViewer Grid.Row="2" Margin="0,0,0,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ScrollViewer Grid.Row="3" Margin="0,0,0,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                                 <ListView x:Name="DllListView" Background="#15011E" 
                                          BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                     <ListView.ItemContainerStyle>
@@ -775,51 +995,51 @@
                                         </Style>
                                     </ListView.ItemContainerStyle>
                                     <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin="5">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="30"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="90"/>
-                                                <ColumnDefinition Width="70"/>
-                                            </Grid.ColumnDefinitions>
-                                            
-                                            <CheckBox Grid.Column="0" IsChecked="{Binding Enabled}" 
+                                        <DataTemplate>
+                                            <Grid Margin="5">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="30"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="90"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <CheckBox Grid.Column="0" IsChecked="{Binding Enabled}" 
                                                      VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding FileName}" 
+                                                <TextBlock Grid.Column="1" Text="{Binding FileName}" 
                                                       Foreground="#FFFFFF" VerticalAlignment="Center" Margin="10,0"/>
-                                            <TextBlock Grid.Column="2" Text="{Binding Status}" 
+                                                <TextBlock Grid.Column="2" Text="{Binding Status}" 
                                                       VerticalAlignment="Center" HorizontalAlignment="Center"
                                                       FontSize="11" TextWrapping="Wrap">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Status}" Value="Injected">
-                                                                <Setter Property="Foreground" Value="#BB4CFF"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="Not Injected">
-                                                                <Setter Property="Foreground" Value="#FF4FD8"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                            <Button Grid.Column="3" x:Name="RemoveButton"
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Status}" Value="Injected">
+                                                                    <Setter Property="Foreground" Value="#BB4CFF"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Status}" Value="Not Injected">
+                                                                    <Setter Property="Foreground" Value="#FF4FD8"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <Button Grid.Column="3" x:Name="RemoveButton"
                                                    Style="{StaticResource DangerButton}"
                                                    Click="RemoveDll_Click" Tag="{Binding}"
                                                    FontSize="10" Padding="8,4">
-                                                <Button.Content>
-                                                    <TextBlock x:Name="RemoveButtonText" Text="Quitar"/>
-                                                </Button.Content>
-                                            </Button>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                                    <Button.Content>
+                                                        <TextBlock x:Name="RemoveButtonText" Text="Quitar"/>
+                                                    </Button.Content>
+                                                </Button>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
                             </ScrollViewer>
-                            
+
                             <!-- Botones de acción -->
-                            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button x:Name="LaunchButton" Content="Launch Game" Width="120" Margin="5"
                                        Style="{StaticResource SuccessButton}" Click="LaunchGame_Click"/>
                                 <Button x:Name="InjectButton" Content="Inject DLLs" Width="120" Margin="5"
@@ -829,13 +1049,13 @@
                             </StackPanel>
                         </Grid>
                     </Border>
-                    
+
                     <!-- Panel derecho - Configuración -->
                     <Border Grid.Column="2" Background="#A5180429" CornerRadius="10" Padding="18">
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel>
                                 <!-- Estatus de versión -->
-                                <Border Background="#15011E" CornerRadius="8" Padding="12" Margin="0,0,0,15">
+                                <Border Background="#15011E" CornerRadius="8" Padding="12" Margin="0,0,0,15" Cursor="">
                                     <StackPanel>
                                         <TextBlock x:Name="VersionStatusTitle" Text="Version Status" 
                                                   FontWeight="Bold" Foreground="#FFD9FF" Margin="0,0,0,5"/>
@@ -847,10 +1067,10 @@
                                         <Button x:Name="ChangelogButton" Content="View Changelog" Width="120" Height="33"
                                                Style="{StaticResource PrimaryButton}" FontSize="10"
                                                Visibility="Collapsed" Click="Changelog_Click" Margin="0,5,0,0"/>
-                                        
+
                                     </StackPanel>
                                 </Border>
-                                
+
                                 <!-- Tipo de juego -->
                                 <TextBlock x:Name="GameTypeTitle" Text="Game Type" FontWeight="Bold" 
                                           Foreground="#FFD9FF" Margin="0,0,0,5"/>
@@ -860,9 +1080,9 @@
                                 <RadioButton x:Name="EnhancedRadio" Content="Enhanced (GTA5_Enhanced.exe)" 
                                             Foreground="#FFFFFF" Margin="0,5" GroupName="GameType" 
                                             Checked="GameType_Changed"/>
-                                
+
                                 <Separator Margin="0,15" Background="#A946FF"/>
-                                
+
                                 <!-- Launcher -->
                                 <TextBlock x:Name="LauncherTitle" Text="Launcher" FontWeight="Bold" 
                                           Foreground="#FFD9FF" Margin="0,0,0,5"/>
@@ -906,6 +1126,7 @@
 
                                 <Separator Margin="0,0,0,15" Background="#A946FF"/>
 
+
                                 <!-- Requisitos -->
                                 <TextBlock x:Name="RequirementsTitle" Text="Requirements" FontWeight="Bold" 
                                           Foreground="#FFD9FF" Margin="0,0,0,5"/>
@@ -933,7 +1154,7 @@
                                 </Border>
 
                                 <Separator Margin="0,15" Background="#A946FF"/>
-                            
+
                                 <!-- Imagen destacada -->
                                 <Border Background="#15011E" CornerRadius="10" Padding="10" Margin="0,15,0,0">
                                     <Viewbox Stretch="Uniform" StretchDirection="DownOnly" MaxHeight="150">
@@ -945,7 +1166,7 @@
                         </ScrollViewer>
                     </Border>
                 </Grid>
-                
+
                 <!-- Barra de estado -->
                 <Border Grid.Row="2" Background="#15011E" CornerRadius="0,0,13,13" Padding="12,6" Margin="0">
                     <Grid>

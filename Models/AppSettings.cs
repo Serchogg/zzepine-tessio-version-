@@ -12,7 +12,7 @@ namespace GTAVInjector.Models
         public bool AutoInject { get; set; } = false;
         public string Language { get; set; } = "es";
         
-        
-      
+        // 🆕 NUEVA PROPIEDAD PARA EL DELAY CONFIGURABLE
+        public int LaunchDelay { get; set; } = 5; // Delay por defecto: 5 segundos
     }
 }
